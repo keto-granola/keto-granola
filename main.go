@@ -15,5 +15,11 @@ func main() {
 }
 
 func run() error {
+	// TODO:
+	// config
+	// logging
+	// start server in new goroutine
+	// graceful shutdown
+
 	return nil
 }
