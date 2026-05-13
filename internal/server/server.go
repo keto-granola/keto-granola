@@ -2,6 +2,8 @@ package server
 
 import (
 	"context"
+	"log/slog"
+	"net/http"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -39,13 +41,13 @@ type customValidator struct {
 	validator *validator.Validate
 }
 
-func New(ctx context.Context, deps Dependencies, cfg *config.App) *Server {
+func New(ctx context.Context, deps Dependencies, environment config.Environment, clientURL string) *Server {
 	instance := echo.New()
 	instance.Validator = &customValidator{validator: validator.New()}
 	instance.HideBanner = true // Prevents startup banner from being logged
 
 	instance.Use(echoMiddleware.CORSWithConfig(echoMiddleware.CORSConfig{
-		AllowOrigins: []string{cfg.ClientURL},
+		AllowOrigins: []string{clientURL},
 	}))
 
 	// TODO: implement logging middleware
@@ -64,7 +66,7 @@ func New(ctx context.Context, deps Dependencies, cfg *config.App) *Server {
 		deps.Db,
 	)
 
-	if cfg.Environment == config.EnvironmentTest {
+	if environment == config.EnvironmentTest {
 		// TODO: run test middleware
 	} else {
 		// TODO: run auth middleware
@@ -81,7 +83,6 @@ func New(ctx context.Context, deps Dependencies, cfg *config.App) *Server {
 
 	return &Server{
 		instance: instance,
-		port:     cfg.Port,
 	}
 }
 
@@ -89,10 +90,18 @@ func (cv *customValidator) Validate(i any) error {
 	return cv.validator.Struct(i)
 }
 
-func (s *Server) Start() {
+func (s *Server) Start(port string) error {
+	if err := s.instance.Start(":" + port); err != nil && err != http.ErrServerClosed {
+		slog.Error("start server", slog.Any("error", err))
+		return err
+	}
 
+	return nil
 }
 
-func (s *Server) Stop() {
+func (s *Server) Stop() error {
+	ctx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
+	defer cancel()
 
+	return s.instance.Shutdown(ctx)
 }
