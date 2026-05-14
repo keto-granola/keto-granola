@@ -11,7 +11,7 @@ import (
 	"github.com/keto-granola/server/internal/config"
 	productadmin "github.com/keto-granola/server/internal/product/admin"
 	"github.com/keto-granola/server/internal/server"
-	store "github.com/keto-granola/server/internal/store"
+	"github.com/keto-granola/server/internal/store"
 )
 
 func main() {
@@ -37,7 +37,7 @@ func run() error {
 
 	dataStore, err := store.New(ctx)
 	if err != nil {
-		return fmt.Errorf("connect to db %v", err)
+		return fmt.Errorf("create store %v", err)
 	}
 	defer dataStore.Close()
 

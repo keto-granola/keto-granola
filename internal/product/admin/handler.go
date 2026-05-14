@@ -15,18 +15,18 @@ func NewHandler(s *Service) *Handler {
 }
 
 type CreateProductRequest struct {
-	Name string `json:"name"`
+	Name string `json:"name" validate:"required"`
 }
 
 func (h *Handler) CreateProduct(e echo.Context) error {
 	ctx := e.Request().Context()
 
-	var createProdReq CreateProductRequest
+	var req CreateProductRequest
 
-	product, err := h.service.CreateProduct(ctx, createProdReq)
+	product, err := h.service.CreateProduct(ctx, req)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "error creating new product").SetInternal(err)
 	}
 
-	return e.JSON(http.StatusOK, product)
+	return e.JSON(http.StatusCreated, product)
 }

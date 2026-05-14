@@ -9,15 +9,15 @@ import (
 )
 
 type Store struct {
-	db *generated.Queries
+	queries *generated.Queries
 }
 
-func New(db *generated.Queries) *Store {
-	return &Store{db: db}
+func New(queries *generated.Queries) *Store {
+	return &Store{queries: queries}
 }
 
 func (s *Store) InsertProduct(ctx context.Context, prod *product.Product) (*product.Product, error) {
-	ID, err := s.db.InsertProduct(ctx, utils.PGTextFrom(prod.Name))
+	ID, err := s.queries.InsertProduct(ctx, utils.PGTextFrom(prod.Name))
 
 	if err != nil {
 		return nil, err
