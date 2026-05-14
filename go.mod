@@ -1,6 +1,6 @@
 module github.com/keto-granola/server
 
-go 1.26.3
+go 1.26
 
 require (
 	github.com/go-playground/validator/v10 v10.30.2

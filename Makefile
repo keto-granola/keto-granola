@@ -11,7 +11,7 @@ run:
 lint: lint/install lint/run
 
 lint/install:
-	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v2.12.2
+	curl -sSfL https://golangci-lint.run/install.sh | sh -s -- v2.12.2
 
 lint/run:
 	bin/golangci-lint run --config .golangci.yml
@@ -29,7 +29,7 @@ test/e2e: # e2e tests only
 	go test -shuffle=on -tags=e2e ./internal/tests
 
 sqlc:
-	go run github.com/sqlc-dev/sqlc/cmd/sqlc@v1.30.0 generate -f internal/store/sqlc.yml
+	go run github.com/sqlc-dev/sqlc/cmd/sqlc@v1.31.1 generate
 
 mocks:
 	go install github.com/matryer/moq@latest && \

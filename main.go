@@ -9,8 +9,9 @@ import (
 	"syscall"
 
 	"github.com/keto-granola/server/internal/config"
+	productadmin "github.com/keto-granola/server/internal/product/admin"
 	"github.com/keto-granola/server/internal/server"
-	"github.com/keto-granola/server/internal/store/db"
+	store "github.com/keto-granola/server/internal/store"
 )
 
 func main() {
@@ -18,8 +19,6 @@ func main() {
 		slog.Error("run", slog.Any("error", err))
 		os.Exit(1)
 	}
-
-	slog.Info("shutting down gracefully...")
 }
 
 func run() error {
@@ -36,27 +35,35 @@ func run() error {
 	}))
 	slog.SetDefault(logger)
 
-	db, err := db.New(ctx)
+	dataStore, err := store.New(ctx)
 	if err != nil {
 		return fmt.Errorf("connect to db %v", err)
 	}
+	defer dataStore.Close()
 
-	server := server.New(ctx, server.Dependencies{Db: db}, cfg.Environment, cfg.ClientURL)
-	svrErr := make(chan error, 1)
+	instance := server.New(ctx, cfg.Environment, cfg.ClientURL, composeHandlers(dataStore))
+
+	serverErr := make(chan error, 1)
 
 	go func() {
-		svrErr <- server.Start(cfg.Port)
+		serverErr <- instance.Start(cfg.Port)
 	}()
 
 	select {
 	case <-ctx.Done():
 		slog.Info("context cancelled")
-	case err = <-svrErr:
+	case err = <-serverErr:
 	}
 
-	if shutdownErr := server.Stop(); shutdownErr != nil {
+	if shutdownErr := instance.Stop(); shutdownErr != nil {
 		slog.Error("server shutdown", slog.Any("error", shutdownErr))
 	}
 
 	return err
+}
+
+func composeHandlers(db *store.Store) *server.Handlers {
+	return &server.Handlers{
+		ProductAdmin: productadmin.NewHandler(productadmin.NewService(db.ProductStore())),
+	}
 }

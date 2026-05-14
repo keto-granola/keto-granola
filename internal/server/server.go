@@ -7,41 +7,39 @@ import (
 	"time"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/keto-granola/server/internal/config"
-	"github.com/keto-granola/server/internal/store/db"
 	"github.com/labstack/echo/v4"
 	echoMiddleware "github.com/labstack/echo/v4/middleware"
+
+	"github.com/keto-granola/server/internal/config"
+	productadmin "github.com/keto-granola/server/internal/product/admin"
 )
 
 const (
-	// How long the server will wait to read the entire request after the connection is accepted
+	// how long the server will wait to read the entire request after the connection is accepted
 	readTimeout = 10 * time.Second
-
-	// How long the server has to write the response after reading the request
+	// how long the server has to write the response after reading the request
 	writeTimeout = 10 * time.Second
+	// how long to keep a keep-alive connection open waiting for the next request
+	idleTimeout     = 120 * time.Second
+	shutdownTimeout = 10 * time.Second
 
-	// How long to keep a keep-alive connection open waiting for the next request
-	idleTimeout = 120 * time.Second
-
-	shutdownTimeout  = 10 * time.Second
 	serverRateLimit  = 60
 	serverBurstLimit = 120
 )
 
 type Server struct {
 	instance *echo.Echo
-	port     string
 }
 
-type Dependencies struct {
-	Db *db.Db
+type Handlers struct {
+	ProductAdmin *productadmin.Handler
 }
 
 type customValidator struct {
 	validator *validator.Validate
 }
 
-func New(ctx context.Context, deps Dependencies, environment config.Environment, clientURL string) *Server {
+func New(ctx context.Context, environment config.Environment, clientURL string, handlers *Handlers) *Server {
 	instance := echo.New()
 	instance.Validator = &customValidator{validator: validator.New()}
 	instance.HideBanner = true // Prevents startup banner from being logged
@@ -62,14 +60,12 @@ func New(ctx context.Context, deps Dependencies, environment config.Environment,
 		},
 	)))
 
-	handlers := NewHandlers(
-		deps.Db,
-	)
-
 	if environment == config.EnvironmentTest {
 		// TODO: run test middleware
+		slog.Info("run test middleware")
 	} else {
 		// TODO: run auth middleware
+		slog.Info("run auth middleware")
 	}
 
 	public := instance.Group("")
