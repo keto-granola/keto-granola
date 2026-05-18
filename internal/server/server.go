@@ -12,6 +12,7 @@ import (
 
 	"github.com/keto-granola/server/internal/config"
 	productadmin "github.com/keto-granola/server/internal/product/admin"
+	"github.com/keto-granola/server/internal/store"
 )
 
 const (
@@ -29,6 +30,7 @@ const (
 
 type Server struct {
 	instance *echo.Echo
+	store       *store.Store
 }
 
 type Handlers struct {
@@ -39,7 +41,7 @@ type customValidator struct {
 	validator *validator.Validate
 }
 
-func New(ctx context.Context, environment config.Environment, clientURL string, handlers *Handlers) *Server {
+func New(ctx context.Context, environment config.Environment, clientURL string, handlers *Handlers, store *store.Store) *Server {
 	instance := echo.New()
 	instance.Validator = &customValidator{validator: validator.New()}
 	instance.HideBanner = true // Prevents startup banner from being logged
@@ -71,7 +73,7 @@ func New(ctx context.Context, environment config.Environment, clientURL string, 
 	public := instance.Group("")
 	private := instance.Group("")
 
-	registerRoutes(public, private, handlers)
+	registerRoutes(public, private, handlers, store)
 
 	instance.Server.ReadTimeout = readTimeout
 	instance.Server.WriteTimeout = writeTimeout
