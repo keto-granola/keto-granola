@@ -90,8 +90,7 @@ func getRequestParams(c echo.Context) string {
 	return params
 }
 
-// echo writes response after middleware runs, so c.Response().Status defaults to 200
-// when an error is present the status must be read from the error instead
+// response status defaults to 200 until the handler writes the response so get status code from error instead
 func responseStatus(c echo.Context, err error) int {
 	if err != nil {
 		var httpErr *echo.HTTPError
