@@ -35,7 +35,7 @@ CREATE TABLE orders (
   tracking_url                TEXT,
   estimated_delivery_date     DATE,
   shipped_at                  TIMESTAMPTZ,
-  delivered_at                TIMESTAMPTZ,
+  delivered_at                TIMESTAMPTZ
 );
 
 CREATE TABLE order_items (

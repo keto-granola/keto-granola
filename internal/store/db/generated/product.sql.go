@@ -15,7 +15,7 @@ const insertProduct = `-- name: InsertProduct :one
 INSERT INTO products (name) VALUES ($1) RETURNING id
 `
 
-func (q *Queries) InsertProduct(ctx context.Context, name pgtype.Text) (pgtype.UUID, error) {
+func (q *Queries) InsertProduct(ctx context.Context, name string) (pgtype.UUID, error) {
 	row := q.db.QueryRow(ctx, insertProduct, name)
 	var id pgtype.UUID
 	err := row.Scan(&id)

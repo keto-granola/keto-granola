@@ -21,7 +21,7 @@ func New(queries *generated.Queries) *Store {
 
 func (s *Store) InsertProduct(ctx context.Context, prod *product.Product) (*product.Product, error) {
 	ID, err := store.ExecQuery[pgtype.UUID](ctx, func() (pgtype.UUID, error) {
-		return s.queries.InsertProduct(ctx, utils.PGTextFrom(prod.Name))
+		return s.queries.InsertProduct(ctx, prod.Name)
 	})
 
 	if err != nil {
