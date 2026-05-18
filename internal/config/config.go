@@ -13,7 +13,7 @@ import (
 type App struct {
 	Port        string
 	ClientURL   string
-	DatabaseURL string
+	DbURL       string
 	LogLevel    slog.Level
 	Environment Environment
 }
@@ -45,11 +45,11 @@ func ParseEnv() (*App, error) {
 	_ = godotenv.Load()
 
 	envVars := map[string]string{
-		"SERVER_PORT":  "",
-		"DATABASE_URL": "",
-		"LOG_LEVEL":    "",
-		"CLIENT_URL":   "",
-		"ENVIRONMENT":  "",
+		"SERVER_PORT": "",
+		"DB_URL":      "",
+		"LOG_LEVEL":   "",
+		"CLIENT_URL":  "",
+		"ENVIRONMENT": "",
 	}
 
 	for key := range envVars {
@@ -72,7 +72,7 @@ func ParseEnv() (*App, error) {
 
 	return &App{
 		Port:        envVars["SERVER_PORT"],
-		DatabaseURL: envVars["DATABASE_URL"],
+		DbURL:       envVars["DB_URL"],
 		ClientURL:   envVars["CLIENT_URL"],
 		LogLevel:    logLevel,
 		Environment: environment,

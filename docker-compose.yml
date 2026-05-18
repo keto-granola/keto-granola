@@ -9,8 +9,8 @@ services:
     env_file:
       - .env
     environment:
-      # Override DATABASE_URL to use @postgres for the db host
-      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable
+      # Override DB_URL to use @postgres for the db host
+      DB_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable
     restart: unless-stopped
     depends_on:
       postgres:

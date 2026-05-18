@@ -10,6 +10,7 @@ import (
 
 	"github.com/keto-granola/server/internal/config"
 	productadmin "github.com/keto-granola/server/internal/product/admin"
+	productstore "github.com/keto-granola/server/internal/product/store"
 	"github.com/keto-granola/server/internal/server"
 	"github.com/keto-granola/server/internal/store"
 )
@@ -35,7 +36,7 @@ func run() error {
 	}))
 	slog.SetDefault(logger)
 
-	dataStore, err := store.New(ctx)
+	dataStore, err := store.New(ctx, cfg.DbURL)
 	if err != nil {
 		return fmt.Errorf("create store %v", err)
 	}
@@ -63,7 +64,9 @@ func run() error {
 }
 
 func composeHandlers(db *store.Store) *server.Handlers {
+	productStore := productstore.New(db.Queries)
+
 	return &server.Handlers{
-		ProductAdmin: productadmin.NewHandler(productadmin.NewService(db.ProductStore())),
+		ProductAdmin: productadmin.NewHandler(productadmin.NewService(productStore)),
 	}
 }
