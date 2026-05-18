@@ -3,7 +3,7 @@ package store
 import (
 	"context"
 	"errors"
-	"log/slog"
+	"fmt"
 	"slices"
 	"time"
 
@@ -16,8 +16,9 @@ import (
 )
 
 const (
-	DbMaxRetries = 5
-	DbBaseDelay  = 100 * time.Millisecond
+	dbMaxRetries = 5
+	dbBaseDelay  = 100 * time.Millisecond
+	pingTimeout    = 5 * time.Second
 )
 
 type Store struct {
@@ -25,19 +26,37 @@ type Store struct {
 	Queries *generated.Queries
 }
 
-func New(ctx context.Context) (*Store, error) {
+func New(ctx context.Context, dbUrl string) (*Store, error) {
+	poolConfig, err := pgxpool.ParseConfig(dbUrl)
+	if err != nil {
+		return nil, fmt.Errorf("parse db config %v", err)
+	}
+
+	pool, err := pgxpool.NewWithConfig(ctx, poolConfig)
+	if err != nil {
+		return nil, fmt.Errorf("create db pool %v", err)
+	}
+
+	pingCtx, cancel := context.WithTimeout(ctx, pingTimeout)
+	defer cancel()
+
+	err = pool.Ping(pingCtx)
+	if err != nil {
+		return nil, fmt.Errorf("ping db: %v", err)
+	}
+
 	return &Store{
-		pool:    nil,
-		Queries: nil,
+		pool:    pool,
+		Queries: generated.New(pool),
 	}, nil
 }
 
 func (s *Store) Close() {
-	slog.Info("closing pool", slog.Any("pool", s.pool))
+	s.pool.Close()
 }
 
 func ExecQuery[T any](ctx context.Context, query func() (T, error)) (T, error) {
-	return utils.RetryWithExponentialBackoff(ctx, query, DbMaxRetries, DbBaseDelay, isRetryableDbError)
+	return utils.RetryWithExponentialBackoff(ctx, query, dbMaxRetries, dbBaseDelay, isRetryableDbError)
 }
 
 func ExecCommand(ctx context.Context, command func() error) error {

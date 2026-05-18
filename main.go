@@ -36,7 +36,7 @@ func run() error {
 	}))
 	slog.SetDefault(logger)
 
-	dataStore, err := store.New(ctx)
+	dataStore, err := store.New(ctx, cfg.DbURL)
 	if err != nil {
 		return fmt.Errorf("create store %v", err)
 	}
