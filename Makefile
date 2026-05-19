@@ -42,6 +42,18 @@ migrate/create:
 	fi
 	migrate create -ext sql -dir internal/store/migrations -seq $(name)
 
+up:
+	docker compose up -d
+
+up/build:
+	docker compose up --build -d
+
+down:
+	docker compose down
+
+down/vol:
+	docker compose down -v
+
 build:
 	CGO_ENABLED=0 \
 	GOOS=linux \

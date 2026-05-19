@@ -20,7 +20,7 @@ func registerRoutes(public, private *echo.Group, handlers *Handlers, dataStore *
 }
 
 func registerHealthEndpoint(public *echo.Group, dataStore *store.Store) {
-	public.POST("/health", func(e echo.Context) error {
+	public.GET("/health", func(e echo.Context) error {
 		dbStatus := "ok"
 		httpStatus := http.StatusOK
 
