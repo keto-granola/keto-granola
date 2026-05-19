@@ -13,6 +13,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 
+	"github.com/keto-granola/server/internal/apperr"
 	"github.com/keto-granola/server/internal/config"
 )
 
@@ -66,6 +67,15 @@ func Log(next echo.HandlerFunc) echo.HandlerFunc {
 
 		if err != nil {
 			attrs = append(attrs, slog.Any("error", err))
+
+			var appErr *apperr.AppError
+			if errors.As(err, &appErr) && appErr.Kind == apperr.KindInternal {
+				attrs = append(attrs,
+					slog.String("stack", appErr.StackTrace()),
+					slog.String("operation", appErr.Operation),
+				)
+			}
+
 			slog.ErrorContext(e.Request().Context(), "request", attrs...)
 		} else {
 			slog.DebugContext(e.Request().Context(), "request", attrs...)

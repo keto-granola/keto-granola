@@ -28,7 +28,7 @@ func run() error {
 
 	cfg, err := config.ParseEnv()
 	if err != nil {
-		return fmt.Errorf("parse env vars %v", err)
+		return fmt.Errorf("parse env vars %w", err)
 	}
 
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
@@ -38,7 +38,7 @@ func run() error {
 
 	dataStore, err := store.New(ctx, cfg.DbURL)
 	if err != nil {
-		return fmt.Errorf("create store %v", err)
+		return fmt.Errorf("create store %w", err)
 	}
 	defer dataStore.Close()
 

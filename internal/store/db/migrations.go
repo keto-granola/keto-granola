@@ -18,7 +18,7 @@ var migrationsFS embed.FS
 func RunMigrations(dbURL string) error {
 	cfg, err := pgx.ParseConfig(dbURL)
 	if err != nil {
-		return fmt.Errorf("parse db connection config: %v", err)
+		return fmt.Errorf("parse db connection config: %w", err)
 	}
 
 	db := stdlib.OpenDB(*cfg)
@@ -26,12 +26,12 @@ func RunMigrations(dbURL string) error {
 
 	dbDriver, err := pgxv5.WithInstance(db, &pgxv5.Config{})
 	if err != nil {
-		return fmt.Errorf("create db driver: %v", err)
+		return fmt.Errorf("create db driver: %w", err)
 	}
 
 	migrationsDriver, err := iofs.New(migrationsFS, "migrations")
 	if err != nil {
-		return fmt.Errorf("set up migrations driver: %v", err)
+		return fmt.Errorf("set up migrations driver: %w", err)
 	}
 
 	m, err := migrate.NewWithInstance(
@@ -41,7 +41,7 @@ func RunMigrations(dbURL string) error {
 		dbDriver,
 	)
 	if err != nil {
-		return fmt.Errorf("create migrate instance: %v", err)
+		return fmt.Errorf("create migrate instance: %w", err)
 	}
 
 	err = m.Up()

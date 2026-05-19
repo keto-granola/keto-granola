@@ -30,12 +30,12 @@ type Store struct {
 func New(ctx context.Context, dbURL string) (*Store, error) {
 	poolConfig, err := pgxpool.ParseConfig(dbURL)
 	if err != nil {
-		return nil, fmt.Errorf("parse pool config %v", err)
+		return nil, fmt.Errorf("parse pool config %w", err)
 	}
 
 	pool, err := pgxpool.NewWithConfig(ctx, poolConfig)
 	if err != nil {
-		return nil, fmt.Errorf("create db pool %v", err)
+		return nil, fmt.Errorf("create db pool %w", err)
 	}
 
 	pingCtx, cancel := context.WithTimeout(ctx, pingTimeout)
@@ -43,11 +43,11 @@ func New(ctx context.Context, dbURL string) (*Store, error) {
 
 	err = pool.Ping(pingCtx)
 	if err != nil {
-		return nil, fmt.Errorf("ping db: %v", err)
+		return nil, fmt.Errorf("ping db: %w", err)
 	}
 
 	if err = db.RunMigrations(dbURL); err != nil {
-		return nil, fmt.Errorf("run migrations: %v", err)
+		return nil, fmt.Errorf("run migrations: %w", err)
 	}
 
 	return &Store{
