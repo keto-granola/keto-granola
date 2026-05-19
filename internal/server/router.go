@@ -16,11 +16,11 @@ func registerRoutes(public, private *echo.Group, handlers *Handlers, dataStore *
 	registerHealthEndpoint(public, dataStore)
 
 	// admin routes
-	private.POST("/admin/product", Handle(handlers.ProductAdmin.CreateProduct, http.StatusCreated))
+	private.POST("/admin/products", Handle(handlers.ProductAdmin.CreateProduct, http.StatusCreated))
 }
 
 func registerHealthEndpoint(public *echo.Group, dataStore *store.Store) {
-	public.POST("/health", func(e echo.Context) error {
+	public.GET("/health", func(e echo.Context) error {
 		dbStatus := "ok"
 		httpStatus := http.StatusOK
 
