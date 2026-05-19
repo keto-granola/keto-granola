@@ -6,15 +6,15 @@ import (
 	"github.com/keto-granola/server/internal/product"
 )
 
-type Service struct {
+type ProductService struct {
 	store product.Repository
 }
 
-func NewService(store product.Repository) *Service {
-	return &Service{store: store}
+func NewService(store product.Repository) *ProductService {
+	return &ProductService{store: store}
 }
 
-func (s *Service) CreateProduct(ctx context.Context, req CreateProductRequest) (*product.Product, error) {
+func (s *ProductService) CreateProduct(ctx context.Context, req CreateProductRequest) (*product.Product, error) {
 	p := &product.Product{
 		Name: req.Name,
 	}
