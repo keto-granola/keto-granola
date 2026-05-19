@@ -15,10 +15,13 @@ const (
 	KindUnauthorized
 	KindValidation
 	KindInternal
+
+	callerDepth    = 2
+	maxStackFrames = 32
 )
 
 func (k Kind) String() string {
-	kinds := [...]string{"unknown", "not_found", "unauthorized", "validation", "internal"}
+	kinds := [...]string{"unknown", "not_found", "unauthorised", "validation", "internal"}
 	if int(k) >= len(kinds) {
 		return fmt.Sprintf("kind(%d)", k)
 	}
@@ -26,18 +29,17 @@ func (k Kind) String() string {
 }
 
 type AppError struct {
-	Code      string         // machine-readable code, e.g. "PRODUCT_NOT_FOUND"
-	Message   string         // human-readable message
-	Operation string         // operation, e.g. "ProductService.GetByID"
-	Kind      Kind           // error category
-	Meta      map[string]any // optional extra context
-	Err       error          // wrapped underlying error
+	Code      string // machine-readable code, e.g. "PRODUCT_NOT_FOUND"
+	Message   string // human-readable message
+	Operation string // operation, e.g. "ProductService.GetByID"
+	Kind      Kind   // error category
+	Err       error  // wrapped underlying error
 	stack     []uintptr
 }
 
 func New(operation, code, message string, kind Kind) *AppError {
-	stack := make([]uintptr, 32)
-	n := runtime.Callers(2, stack)
+	stack := make([]uintptr, maxStackFrames)
+	n := runtime.Callers(callerDepth, stack)
 
 	return &AppError{
 		Operation: operation,
@@ -89,8 +91,8 @@ func NotFound(operation, code, message string) *AppError {
 	return New(operation, code, message, KindNotFound)
 }
 
-func Unauthorized(operation, message string) *AppError {
-	return New(operation, "UNAUTHORIZED", message, KindUnauthorized)
+func Unauthorised(operation, message string) *AppError {
+	return New(operation, "UNAUTHORISED", message, KindUnauthorized)
 }
 
 func Validation(operation, code, message string) *AppError {
