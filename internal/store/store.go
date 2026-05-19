@@ -11,6 +11,7 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 
+	"github.com/keto-granola/server/internal/store/db"
 	"github.com/keto-granola/server/internal/store/db/generated"
 	"github.com/keto-granola/server/internal/utils"
 )
@@ -26,10 +27,10 @@ type Store struct {
 	Queries *generated.Queries
 }
 
-func New(ctx context.Context, dbUrl string) (*Store, error) {
-	poolConfig, err := pgxpool.ParseConfig(dbUrl)
+func New(ctx context.Context, dbURL string) (*Store, error) {
+	poolConfig, err := pgxpool.ParseConfig(dbURL)
 	if err != nil {
-		return nil, fmt.Errorf("parse db config %v", err)
+		return nil, fmt.Errorf("parse pool config %v", err)
 	}
 
 	pool, err := pgxpool.NewWithConfig(ctx, poolConfig)
@@ -43,6 +44,10 @@ func New(ctx context.Context, dbUrl string) (*Store, error) {
 	err = pool.Ping(pingCtx)
 	if err != nil {
 		return nil, fmt.Errorf("ping db: %v", err)
+	}
+
+	if err = db.RunMigrations(dbURL); err != nil {
+		return nil, fmt.Errorf("run migrations: %v", err)
 	}
 
 	return &Store{
