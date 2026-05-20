@@ -7,6 +7,7 @@ package generated
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/jackc/pgx/v5/pgtype"
 )
@@ -31,8 +32,8 @@ INSERT INTO products (
 type InsertProductParams struct {
 	Name            string
 	Description     string
-	Ingredients     []byte
-	Nutrition       []byte
+	Ingredients     json.RawMessage
+	Nutrition       json.RawMessage
 	WeightG         int32
 	DietaryTags     []string
 	Allergens       []string
@@ -46,8 +47,8 @@ type InsertProductRow struct {
 	ID              pgtype.UUID
 	Name            string
 	Description     string
-	Ingredients     []byte
-	Nutrition       []byte
+	Ingredients     json.RawMessage
+	Nutrition       json.RawMessage
 	WeightG         int32
 	DietaryTags     []string
 	Allergens       []string

@@ -16,22 +16,22 @@ func NewService(store product.Repository) *ProductService {
 	return &ProductService{store: store}
 }
 
-func (s *ProductService) CreateProduct(ctx context.Context, req *CreateProductRequest) (*CreateProductResponse, error) {
-	prod := &product.Product{
-		Name:            strings.TrimSpace(req.Name),
-		Description:     strings.TrimSpace(req.Description),
-		Ingredients:     normaliseIngredients(req.Ingredients),
-		Nutrition:       req.Nutrition,
-		DietaryTags:     normaliseDietaryTags(req.DietaryTags),
-		WeightG:         req.WeightG,
-		Allergens:       normaliseAllergens(req.Allergens),
-		PriceCents:      req.PriceCents,
-		Currency:        strings.ToUpper(req.Currency),
-		ImageStorageKey: req.ImageStorageKey,
-		ImageAlt:        strings.TrimSpace(req.ImageAlt),
+func (s *ProductService) CreateProduct(ctx context.Context, params *product.CreateProductParams) (*CreateProductResponse, error) {
+	createProdParams := &product.CreateProductParams{
+		Name:            strings.TrimSpace(params.Name),
+		Description:     strings.TrimSpace(params.Description),
+		Ingredients:     normaliseIngredients(params.Ingredients),
+		Nutrition:       params.Nutrition,
+		DietaryTags:     normaliseDietaryTags(params.DietaryTags),
+		WeightG:         params.WeightG,
+		Allergens:       normaliseAllergens(params.Allergens),
+		PriceCents:      params.PriceCents,
+		Currency:        strings.ToUpper(params.Currency),
+		ImageStorageKey: params.ImageStorageKey,
+		ImageAlt:        strings.TrimSpace(params.ImageAlt),
 	}
 
-	newProd, err := s.store.InsertProduct(ctx, prod)
+	newProd, err := s.store.InsertProduct(ctx, createProdParams)
 	if err != nil {
 		return nil, err
 	}

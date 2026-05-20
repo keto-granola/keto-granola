@@ -15,7 +15,7 @@ const (
 )
 
 type Repository interface {
-	InsertProduct(ctx context.Context, product *Product) (*Product, error)
+	InsertProduct(ctx context.Context, params *CreateProductParams) (*Product, error)
 }
 
 type Product struct {
@@ -24,10 +24,10 @@ type Product struct {
 	Description     string       `json:"description"`
 	Ingredients     []Ingredient `json:"ingredients"`
 	Nutrition       Nutrition    `json:"nutrition"`
-	WeightG         int64        `json:"weight_g"`
+	WeightG         int32        `json:"weight_g"`
 	DietaryTags     []DietaryTag `json:"dietary_tags"`
 	Allergens       []string     `json:"allergens"`
-	PriceCents      int64        `json:"price_cents"`
+	PriceCents      int32        `json:"price_cents"`
 	Currency        string       `json:"currency"`
 	ImageStorageKey string       `json:"image_storage_key"`
 	ImageAlt        string       `json:"image_alt"`
@@ -35,7 +35,7 @@ type Product struct {
 
 type Nutrition struct {
 	Per100g  NutritionValues `json:"per_100g" validate:"required"`
-	ServingG int64           `json:"serving_g" validate:"required"`
+	ServingG int32           `json:"serving_g" validate:"required"`
 }
 
 type NutritionValues struct {
@@ -54,4 +54,18 @@ type Ingredient struct {
 	Name           string   `json:"name" validate:"required"`
 	SubIngredients []string `json:"sub_ingredients,omitempty"`
 	Percentage     float64  `json:"percentage"`
+}
+
+type CreateProductParams struct {
+	Name            string       `json:"name" validate:"required"`
+	Description     string       `json:"description" validate:"required"`
+	Ingredients     []Ingredient `json:"ingredients" validate:"required,min=1,dive"`
+	Nutrition       Nutrition    `json:"nutrition" validate:"required"`
+	WeightG         int32        `json:"weight_g" validate:"required"`
+	DietaryTags     []DietaryTag `json:"dietary_tags,omitempty" validate:"dive,dietary_tag"`
+	Allergens       []string     `json:"allergens,omitempty"`
+	PriceCents      int32        `json:"price_cents" validate:"required"`
+	Currency        string       `json:"currency" validate:"required,len=3"`
+	ImageStorageKey string       `json:"image_storage_key" validate:"required"`
+	ImageAlt        string       `json:"image_alt" validate:"required"`
 }

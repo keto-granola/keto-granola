@@ -6,6 +6,7 @@ package generated
 
 import (
 	"database/sql/driver"
+	"encoding/json"
 	"fmt"
 
 	"github.com/jackc/pgx/v5/pgtype"
@@ -109,8 +110,8 @@ type Product struct {
 	CreatedAt       pgtype.Timestamptz
 	UpdatedAt       pgtype.Timestamptz
 	Description     string
-	Ingredients     []byte
-	Nutrition       []byte
+	Ingredients     json.RawMessage
+	Nutrition       json.RawMessage
 	WeightG         int32
 	DietaryTags     []string
 	Allergens       []string
