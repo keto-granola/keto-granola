@@ -2,7 +2,6 @@ package product
 
 import (
 	"context"
-	"time"
 
 	"github.com/google/uuid"
 )
@@ -20,36 +19,39 @@ type Repository interface {
 }
 
 type Product struct {
-	ID          uuid.UUID     `json:"id"`
-	Name        string        `json:"name"`
-	CreatedAt   time.Time     `json:"created_at"`
-	UpdatedAt   time.Time     `json:"updated_at"`
-	Description string        `json:"description"`
-	Ingredients []Ingredient  `json:"ingredients"`
-	Nutrition   NutritionInfo `json:"nutrition"`
-	DietaryTags []DietaryTag  `json:"dietary_tags"`
-	Allergens   []string      `json:"allergens"`
-	PriceCents  int64         `json:"price_cents"`
-	Currency    string        `json:"currency"`
-	Image_URL   string        `json:"image_url"`
-	Image_ALT   string        `json:"image_alt"`
+	ID              uuid.UUID    `json:"id"`
+	Name            string       `json:"name"`
+	Description     string       `json:"description"`
+	Ingredients     []Ingredient `json:"ingredients"`
+	Nutrition       Nutrition    `json:"nutrition"`
+	WeightG         int64        `json:"weight_g"`
+	DietaryTags     []DietaryTag `json:"dietary_tags"`
+	Allergens       []string     `json:"allergens"`
+	PriceCents      int64        `json:"price_cents"`
+	Currency        string       `json:"currency"`
+	ImageStorageKey string       `json:"image_storage_key"`
+	ImageAlt        string       `json:"image_alt"`
 }
 
-type NutritionInfo struct {
-	ServingSize string `json:"serving_size"`
+type Nutrition struct {
+	Per100g  NutritionValues `json:"per_100g" validate:"required"`
+	ServingG int64           `json:"serving_g" validate:"required"`
+}
 
-	Calories      float64 `json:"calories"`
-	Kilojoules    float64 `json:"kilojoules"`
-	ProteinG      float64 `json:"protein_g"`
-	FatTotalG     float64 `json:"fat_total_g"`
-	FatSaturatedG float64 `json:"fat_saturated_g"`
-	CarbsG        float64 `json:"carbs_g"`
-	FibreG        float64 `json:"fibre_g"`
-	SugarG        float64 `json:"sugar_g"`
-	SodiumMg      float64 `json:"sodium_mg"`
+type NutritionValues struct {
+	Calories      float64 `json:"calories" validate:"required"`
+	Kilojoules    float64 `json:"kilojoules" validate:"required"`
+	ProteinG      float64 `json:"protein_g" validate:"required"`
+	FatTotalG     float64 `json:"fat_total_g" validate:"required"`
+	FatSaturatedG float64 `json:"fat_saturated_g" validate:"required"`
+	CarbsG        float64 `json:"carbs_g" validate:"required"`
+	FibreG        float64 `json:"fibre_g" validate:"required"`
+	SugarG        float64 `json:"sugar_g" validate:"required"`
+	SodiumMg      float64 `json:"sodium_mg" validate:"required"`
 }
 
 type Ingredient struct {
-	Name       string   `json:"name"`
-	Percentage *float64 `json:"percentage,omitempty"`
+	Name           string   `json:"name" validate:"required"`
+	SubIngredients []string `json:"sub_ingredients,omitempty"`
+	Percentage     float64  `json:"percentage"`
 }

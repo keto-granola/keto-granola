@@ -104,6 +104,18 @@ type OrderItem struct {
 }
 
 type Product struct {
-	ID   pgtype.UUID
-	Name string
+	ID              pgtype.UUID
+	Name            string
+	CreatedAt       pgtype.Timestamptz
+	UpdatedAt       pgtype.Timestamptz
+	Description     string
+	Ingredients     []byte
+	Nutrition       []byte
+	WeightG         int32
+	DietaryTags     []string
+	Allergens       []string
+	PriceCents      int32
+	Currency        string
+	ImageStorageKey string
+	ImageAlt        string
 }

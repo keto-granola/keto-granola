@@ -6,11 +6,12 @@ CREATE TABLE products (
   description TEXT NOT NULL,
   ingredients JSONB NOT NULL,
   nutrition JSONB NOT NULL,
+  weight_g INTEGER NOT NULL,
   dietary_tags TEXT[] NOT NULL DEFAULT '{}',
-  allergens []TEXT NOT NULL DEFAULT '{}',
+  allergens TEXT[] NOT NULL DEFAULT '{}',
   price_cents INTEGER NOT NULL,
   currency CHAR(3) NOT NULL DEFAULT 'AUD',
-  image_url TEXT NOT NULL,
+  image_storage_key TEXT NOT NULL,
   image_alt TEXT NOT NULL
 );
 
