@@ -1,7 +1,19 @@
 CREATE TABLE products (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name TEXT NOT NULL
+  name TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  description TEXT NOT NULL,
+  ingredients JSONB NOT NULL,
+  nutrition JSONB NOT NULL,
+  dietary_tags TEXT[] NOT NULL DEFAULT '{}',
+  allergens []TEXT NOT NULL DEFAULT '{}',
+  price_cents INTEGER NOT NULL,
+  currency CHAR(3) NOT NULL DEFAULT 'AUD',
+  image_url TEXT NOT NULL,
+  image_alt TEXT NOT NULL
 );
+
 
 CREATE TYPE order_status AS ENUM ('confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded');
 
@@ -27,7 +39,7 @@ CREATE TABLE orders (
   stripe_payment_intent_id TEXT UNIQUE NOT NULL,
   stripe_payment_status TEXT NOT NULL,       
   amount_total_cents INTEGER NOT NULL,
-  currency TEXT NOT NULL DEFAULT 'AUD',
+  currency CHAR(3) NOT NULL DEFAULT 'AUD',
 
   -- Shipping
   shipping_method             TEXT,
