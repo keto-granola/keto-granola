@@ -26,7 +26,7 @@ type CreateProductRequest struct {
 	Image_ALT       string                `json:"image_alt" validate:"required"`
 }
 
-func (h *Handler) CreateProduct(ctx context.Context, req CreateProductRequest) (*product.Product, error) {
+func (h *Handler) CreateProduct(ctx context.Context, req *CreateProductRequest) (*product.Product, error) {
 	prod, err := h.service.CreateProduct(ctx, req)
 	if err != nil {
 		return nil, err

@@ -14,7 +14,7 @@ func NewService(store product.Repository) *ProductService {
 	return &ProductService{store: store}
 }
 
-func (s *ProductService) CreateProduct(ctx context.Context, req CreateProductRequest) (*product.Product, error) {
+func (s *ProductService) CreateProduct(ctx context.Context, req *CreateProductRequest) (*product.Product, error) {
 	p := &product.Product{
 		Name: req.Name,
 	}

@@ -44,7 +44,7 @@ type NutritionInfo struct {
 	FatTotalG     float64 `json:"fat_total_g"`
 	FatSaturatedG float64 `json:"fat_saturated_g"`
 	CarbsG        float64 `json:"carbs_g"`
-	FiberG        float64 `json:"fiber_g"`
+	FibreG        float64 `json:"fibre_g"`
 	SugarG        float64 `json:"sugar_g"`
 	SodiumMg      float64 `json:"sodium_mg"`
 }
