@@ -18,6 +18,9 @@ const (
 
 	callerDepth    = 2
 	maxStackFrames = 32
+
+	ErrMsgValidation = "invalid request"
+	ErrMsgInternal   = "internal server error"
 )
 
 func (k Kind) String() string {
@@ -100,5 +103,5 @@ func Validation(operation, code, message string) *AppError {
 }
 
 func Internal(operation string, err error) *AppError {
-	return Wrap(err, operation, "INTERNAL_ERROR", "internal server error", KindInternal)
+	return Wrap(err, operation, "INTERNAL_ERROR", ErrMsgInternal, KindInternal)
 }

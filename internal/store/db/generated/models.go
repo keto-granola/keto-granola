@@ -6,6 +6,7 @@ package generated
 
 import (
 	"database/sql/driver"
+	"encoding/json"
 	"fmt"
 
 	"github.com/jackc/pgx/v5/pgtype"
@@ -104,6 +105,18 @@ type OrderItem struct {
 }
 
 type Product struct {
-	ID   pgtype.UUID
-	Name string
+	ID              pgtype.UUID
+	Name            string
+	CreatedAt       pgtype.Timestamptz
+	UpdatedAt       pgtype.Timestamptz
+	Description     string
+	Ingredients     json.RawMessage
+	Nutrition       json.RawMessage
+	WeightG         int32
+	DietaryTags     []string
+	Allergens       []string
+	PriceCents      int32
+	Currency        string
+	ImageStorageKey string
+	ImageAlt        string
 }

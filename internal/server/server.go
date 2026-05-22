@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	echoMiddleware "github.com/labstack/echo/v4/middleware"
 
@@ -37,13 +36,9 @@ type Handlers struct {
 	ProductAdmin *productadmin.Handler
 }
 
-type customValidator struct {
-	validator *validator.Validate
-}
-
 func New(ctx context.Context, environment config.Environment, clientURL string, handlers *Handlers, dataStore *store.Store) *Server {
 	instance := echo.New()
-	instance.Validator = &customValidator{validator: validator.New()}
+	NewValidator(instance)
 	instance.HideBanner = true // Prevents startup banner from being logged
 
 	instance.Use(echoMiddleware.CORSWithConfig(echoMiddleware.CORSConfig{
@@ -81,10 +76,6 @@ func New(ctx context.Context, environment config.Environment, clientURL string, 
 	return &Server{
 		instance: instance,
 	}
-}
-
-func (cv *customValidator) Validate(i any) error {
-	return cv.validator.Struct(i)
 }
 
 func (s *Server) Start(port string) error {

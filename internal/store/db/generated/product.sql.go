@@ -7,17 +7,85 @@ package generated
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const insertProduct = `-- name: InsertProduct :one
-INSERT INTO products (name) VALUES ($1) RETURNING id
+INSERT INTO products (
+  name, 
+  description, 
+  ingredients, 
+  nutrition, 
+  weight_g, 
+  dietary_tags, 
+  allergens, 
+  price_cents,
+  currency,
+  image_storage_key,
+  image_alt
+) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) 
+  RETURNING id, name, description, ingredients, nutrition, weight_g, dietary_tags, allergens, price_cents, currency, image_storage_key, image_alt
 `
 
-func (q *Queries) InsertProduct(ctx context.Context, name string) (pgtype.UUID, error) {
-	row := q.db.QueryRow(ctx, insertProduct, name)
-	var id pgtype.UUID
-	err := row.Scan(&id)
-	return id, err
+type InsertProductParams struct {
+	Name            string
+	Description     string
+	Ingredients     json.RawMessage
+	Nutrition       json.RawMessage
+	WeightG         int32
+	DietaryTags     []string
+	Allergens       []string
+	PriceCents      int32
+	Currency        string
+	ImageStorageKey string
+	ImageAlt        string
+}
+
+type InsertProductRow struct {
+	ID              pgtype.UUID
+	Name            string
+	Description     string
+	Ingredients     json.RawMessage
+	Nutrition       json.RawMessage
+	WeightG         int32
+	DietaryTags     []string
+	Allergens       []string
+	PriceCents      int32
+	Currency        string
+	ImageStorageKey string
+	ImageAlt        string
+}
+
+func (q *Queries) InsertProduct(ctx context.Context, arg InsertProductParams) (InsertProductRow, error) {
+	row := q.db.QueryRow(ctx, insertProduct,
+		arg.Name,
+		arg.Description,
+		arg.Ingredients,
+		arg.Nutrition,
+		arg.WeightG,
+		arg.DietaryTags,
+		arg.Allergens,
+		arg.PriceCents,
+		arg.Currency,
+		arg.ImageStorageKey,
+		arg.ImageAlt,
+	)
+	var i InsertProductRow
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Description,
+		&i.Ingredients,
+		&i.Nutrition,
+		&i.WeightG,
+		&i.DietaryTags,
+		&i.Allergens,
+		&i.PriceCents,
+		&i.Currency,
+		&i.ImageStorageKey,
+		&i.ImageAlt,
+	)
+	return i, err
 }
