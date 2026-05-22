@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+
 	"github.com/keto-granola/server/internal/product"
 	"github.com/keto-granola/server/internal/product/admin"
 	"github.com/keto-granola/server/internal/product/mocks"
@@ -26,7 +27,7 @@ func TestCreateProduct_HappyPath(t *testing.T) {
 			},
 		}
 
-		ctx, rec := testhelpers.SetupEchoContext(t, createProductReqBody, "POST", "/admin/products")
+		ctx, rec := testhelpers.SetupEchoContext(t, createProductReqBody, http.MethodPost, "/admin/products")
 
 		h := admin.NewHandler(admin.NewService(&mockRepo))
 

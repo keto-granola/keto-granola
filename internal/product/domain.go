@@ -6,6 +6,11 @@ import (
 	"github.com/google/uuid"
 )
 
+const (
+	DietaryTagGlutenFree = "gluten-free"
+	DietaryTagKeto       = "keto"
+)
+
 //go:generate moq -out mocks/mock.go -pkg mocks . Repository
 
 type Repository interface {

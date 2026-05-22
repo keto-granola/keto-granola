@@ -2,17 +2,26 @@ package admin_test
 
 import (
 	"github.com/google/uuid"
+
 	"github.com/keto-granola/server/internal/product"
 	"github.com/keto-granola/server/internal/product/admin"
+)
+
+const (
+	ingredient1    = "ing1"
+	subIngedient1  = "sub1"
+	subIngredient2 = "sub2"
+	subIngredient3 = "sub3"
+	subIngredient4 = "sub4"
 )
 
 var createProductReqBody = &product.CreateProductParams{
 	Name:        "Test Granola  ",
 	Description: "   Test Description",
 	Ingredients: []product.Ingredient{
-		{Name: "iNG1", SubIngredients: []string{"sub1", "sub2", "sub3", "sub4"}, Percentage: 70},
-		{Name: "ing1", SubIngredients: []string{}, Percentage: 70},
-		{Name: "ing3 ", SubIngredients: []string{"sub1", "sub2", "SUB1", "sub3 ", "  suB4", "Sub1"}, Percentage: 10},
+		{Name: "iNG1", SubIngredients: []string{subIngedient1, subIngredient2, subIngredient3, subIngredient4}, Percentage: 70},
+		{Name: ingredient1, SubIngredients: []string{}, Percentage: 70},
+		{Name: "ing3 ", SubIngredients: []string{subIngedient1, subIngredient2, "SUB1", "sub3 ", "  suB4", "Sub1"}, Percentage: 10},
 		{Name: "ING2", SubIngredients: []string{}, Percentage: 20},
 	},
 	Nutrition: product.Nutrition{
@@ -30,7 +39,7 @@ var createProductReqBody = &product.CreateProductParams{
 		ServingG: 40,
 	},
 	WeightG:         450,
-	DietaryTags:     []string{"keto", "gluten-free"},
+	DietaryTags:     []string{product.DietaryTagKeto, product.DietaryTagGlutenFree},
 	Allergens:       []string{},
 	PriceCents:      1200,
 	Currency:        "aud",
@@ -42,9 +51,9 @@ var expectedCreateProductParams = &product.CreateProductParams{
 	Name:        "Test Granola",
 	Description: "Test Description",
 	Ingredients: []product.Ingredient{
-		{Name: "ing1", SubIngredients: []string{"sub1", "sub2", "sub3", "sub4"}, Percentage: 70},
+		{Name: ingredient1, SubIngredients: []string{subIngedient1, subIngredient2, subIngredient3, subIngredient4}, Percentage: 70},
 		{Name: "ing2", SubIngredients: []string{}, Percentage: 20},
-		{Name: "ing3", SubIngredients: []string{"sub1", "sub2", "sub3", "sub4"}, Percentage: 10},
+		{Name: "ing3", SubIngredients: []string{subIngedient1, subIngredient2, subIngredient3, subIngredient4}, Percentage: 10},
 	},
 	Nutrition: product.Nutrition{
 		Per100g: product.NutritionValues{
@@ -61,7 +70,7 @@ var expectedCreateProductParams = &product.CreateProductParams{
 		ServingG: 40,
 	},
 	WeightG:         450,
-	DietaryTags:     []string{"keto", "gluten-free"},
+	DietaryTags:     []string{product.DietaryTagKeto, product.DietaryTagGlutenFree},
 	Allergens:       []string{},
 	PriceCents:      1200,
 	Currency:        "AUD",
@@ -74,9 +83,9 @@ var insertedProd = &product.Product{
 	Name:        "Test Granola",
 	Description: "Test Description",
 	Ingredients: []product.Ingredient{
-		{Name: "ing1", SubIngredients: []string{"sub1", "sub2", "sub3", "sub4"}, Percentage: 70},
+		{Name: ingredient1, SubIngredients: []string{subIngedient1, subIngredient2, subIngredient3, subIngredient4}, Percentage: 70},
 		{Name: "ing2", SubIngredients: []string{}, Percentage: 20},
-		{Name: "ing3", SubIngredients: []string{"sub1", "sub2", "sub3", "sub4"}, Percentage: 10},
+		{Name: "ing3", SubIngredients: []string{subIngedient1, subIngredient2, subIngredient3, subIngredient4}, Percentage: 10},
 	},
 	Nutrition: product.Nutrition{
 		Per100g: product.NutritionValues{
@@ -92,7 +101,7 @@ var insertedProd = &product.Product{
 		},
 		ServingG: 40,
 	},
-	DietaryTags:     []string{"keto", "gluten-free"},
+	DietaryTags:     []string{product.DietaryTagKeto, product.DietaryTagGlutenFree},
 	Allergens:       []string{},
 	WeightG:         450,
 	PriceCents:      1200,

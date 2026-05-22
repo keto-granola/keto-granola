@@ -1,16 +1,18 @@
 package testhelpers
 
 import (
+	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
+
+	"github.com/labstack/echo/v4"
 
 	"github.com/keto-granola/server/internal/config"
 	"github.com/keto-granola/server/internal/server"
-	"github.com/labstack/echo/v4"
 )
 
 func SetupEchoContext(
@@ -20,6 +22,7 @@ func SetupEchoContext(
 	endpoint string,
 ) (echo.Context, *httptest.ResponseRecorder) {
 	t.Helper()
+	ctx := context.Background()
 
 	instance := echo.New()
 	server.NewValidator(instance)
@@ -33,16 +36,15 @@ func SetupEchoContext(
 	var req *http.Request
 
 	switch method {
-	case "POST":
-		req = httptest.NewRequest(http.MethodPost, targetURL, strings.NewReader(string(jsonBytes)))
-	case "GET":
-		req = httptest.NewRequest(http.MethodGet, targetURL, http.NoBody)
+	case http.MethodPost:
+		req = httptest.NewRequestWithContext(ctx, method, targetURL, bytes.NewReader(jsonBytes))
+	case http.MethodPatch:
+		req = httptest.NewRequestWithContext(ctx, method, targetURL, bytes.NewReader(jsonBytes))
+	case http.MethodGet:
+		req = httptest.NewRequestWithContext(ctx, method, targetURL, http.NoBody)
 	}
 
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-
-	ctx := req.Context()
-	req = req.WithContext(ctx)
 
 	rec := httptest.NewRecorder()
 	return instance.NewContext(req, rec), rec
