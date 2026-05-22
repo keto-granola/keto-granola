@@ -6,14 +6,6 @@ import (
 	"github.com/google/uuid"
 )
 
-type DietaryTag string
-
-const (
-	DietaryTagKeto       DietaryTag = "keto"
-	DietaryTagGlutenFree DietaryTag = "gluten_free"
-	DietaryTagVegetarian DietaryTag = "vegetarian"
-)
-
 type Repository interface {
 	InsertProduct(ctx context.Context, params *CreateProductParams) (*Product, error)
 }
@@ -25,7 +17,7 @@ type Product struct {
 	Ingredients     []Ingredient `json:"ingredients"`
 	Nutrition       Nutrition    `json:"nutrition"`
 	WeightG         int32        `json:"weight_g"`
-	DietaryTags     []DietaryTag `json:"dietary_tags"`
+	DietaryTags     []string     `json:"dietary_tags"`
 	Allergens       []string     `json:"allergens"`
 	PriceCents      int32        `json:"price_cents"`
 	Currency        string       `json:"currency"`
@@ -62,7 +54,7 @@ type CreateProductParams struct {
 	Ingredients     []Ingredient `json:"ingredients" validate:"required,min=1,dive"`
 	Nutrition       Nutrition    `json:"nutrition" validate:"required"`
 	WeightG         int32        `json:"weight_g" validate:"required"`
-	DietaryTags     []DietaryTag `json:"dietary_tags,omitempty" validate:"dive,dietary_tag"`
+	DietaryTags     []string     `json:"dietary_tags,omitempty"`
 	Allergens       []string     `json:"allergens,omitempty"`
 	PriceCents      int32        `json:"price_cents" validate:"required"`
 	Currency        string       `json:"currency" validate:"required,len=3"`

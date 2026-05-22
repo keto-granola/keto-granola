@@ -8,6 +8,7 @@ import (
 	"github.com/keto-granola/server/internal/product"
 	"github.com/keto-granola/server/internal/store"
 	"github.com/keto-granola/server/internal/store/db/generated"
+	"github.com/keto-granola/server/internal/store/db/utils"
 )
 
 type Store struct {
@@ -46,18 +47,13 @@ func toInsertProductParams(params *product.CreateProductParams) (*generated.Inse
 		return nil, apperr.Internal("Store.InsertProduct", err)
 	}
 
-	dietaryTags := make([]string, len(params.DietaryTags))
-	for i, tag := range params.DietaryTags {
-		dietaryTags[i] = string(tag)
-	}
-
 	return &generated.InsertProductParams{
 		Name:            params.Name,
 		Description:     params.Description,
 		Ingredients:     ingredients,
 		Nutrition:       nutrition,
 		WeightG:         params.WeightG,
-		DietaryTags:     dietaryTags,
+		DietaryTags:     params.DietaryTags,
 		Allergens:       params.Allergens,
 		PriceCents:      params.PriceCents,
 		Currency:        params.Currency,
@@ -77,18 +73,14 @@ func insertedProductFrom(row *generated.InsertProductRow) (*product.Product, err
 		return nil, apperr.Internal("Store.InsertProduct", err)
 	}
 
-	dietaryTags := make([]product.DietaryTag, len(row.DietaryTags))
-	for i, tag := range row.DietaryTags {
-		dietaryTags[i] = product.DietaryTag(tag)
-	}
-
 	return &product.Product{
+		ID:              utils.UUIDFrom(row.ID),
 		Name:            row.Name,
 		Description:     row.Description,
 		Ingredients:     ingredients,
 		Nutrition:       nutrition,
 		WeightG:         row.WeightG,
-		DietaryTags:     dietaryTags,
+		DietaryTags:     row.DietaryTags,
 		Allergens:       row.Allergens,
 		PriceCents:      row.PriceCents,
 		Currency:        row.Currency,
