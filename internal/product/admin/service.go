@@ -37,7 +37,7 @@ func (s *ProductService) CreateProduct(ctx context.Context, params *product.Crea
 	}
 
 	// TODO: construct CDN URL
-	cdnURL := "" // e.g: d3f8k9x7abc123.cloudfront.net/images/product-123/image-1.jpg
+	cdnURL := ""
 
 	return &CreateProductResponse{
 		ID:          newProd.ID,
@@ -66,6 +66,7 @@ func normaliseIngredients(ingredients []product.Ingredient) []product.Ingredient
 		}
 
 		name = strings.ToLower(name)
+
 		if _, exists := seenMain[name]; exists {
 			continue
 		}
@@ -73,7 +74,8 @@ func normaliseIngredients(ingredients []product.Ingredient) []product.Ingredient
 		seenMain[name] = struct{}{}
 
 		seenSub := make(map[string]struct{}, len(main.SubIngredients))
-		subIngredients := make([]string, 0, len(main.SubIngredients))
+		subs := make([]string, 0, len(main.SubIngredients))
+
 		for _, sub := range main.SubIngredients {
 			sub = strings.TrimSpace(sub)
 			if sub == "" {
@@ -81,17 +83,19 @@ func normaliseIngredients(ingredients []product.Ingredient) []product.Ingredient
 			}
 
 			sub = strings.ToLower(sub)
+
 			if _, exists := seenSub[sub]; exists {
 				continue
 			}
 
 			seenSub[sub] = struct{}{}
-			subIngredients = append(subIngredients, sub)
+
+			subs = append(subs, sub)
 		}
 
 		out = append(out, product.Ingredient{
 			Name:           name,
-			SubIngredients: subIngredients,
+			SubIngredients: subs,
 			Percentage:     main.Percentage,
 		})
 	}

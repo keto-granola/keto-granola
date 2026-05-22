@@ -23,7 +23,7 @@ type CreateProductResponse struct {
 	Ingredients []product.Ingredient `json:"ingredients"`
 	Nutrition   product.Nutrition    `json:"nutrition"`
 	WeightG     int32                `json:"weight_g"`
-	DietaryTags []string `json:"dietary_tags"`
+	DietaryTags []string             `json:"dietary_tags"`
 	Allergens   []string             `json:"allergens"`
 	PriceCents  int32                `json:"price_cents"`
 	Currency    string               `json:"currency"`

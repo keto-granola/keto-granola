@@ -4,8 +4,9 @@ import (
 	"errors"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/keto-granola/server/internal/apperr"
 	"github.com/labstack/echo/v4"
+
+	"github.com/keto-granola/server/internal/apperr"
 )
 
 type customValidator struct {
@@ -17,7 +18,6 @@ func newValidator(instance *echo.Echo) {
 }
 
 func (cv *customValidator) Validate(i any) error {
-
 	err := cv.validator.Struct(i)
 	if err == nil {
 		return nil
