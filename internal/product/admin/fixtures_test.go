@@ -203,7 +203,7 @@ var createProdUnhappyPathTestCases = []testCase{
 			DietaryTags:     createProdReqBody.DietaryTags,
 			Allergens:       createProdReqBody.Allergens,
 			PriceCents:      createProdReqBody.PriceCents,
-			Currency:        createProdReqBody.Currency,
+			Currency:        "gb",
 			ImageStorageKey: createProdReqBody.ImageStorageKey,
 			ImageAlt:        createProdReqBody.ImageAlt,
 		},
