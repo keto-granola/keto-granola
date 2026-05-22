@@ -38,7 +38,7 @@ type Handlers struct {
 
 func New(ctx context.Context, environment config.Environment, clientURL string, handlers *Handlers, dataStore *store.Store) *Server {
 	instance := echo.New()
-	newValidator(instance)
+	NewValidator(instance)
 	instance.HideBanner = true // Prevents startup banner from being logged
 
 	instance.Use(echoMiddleware.CORSWithConfig(echoMiddleware.CORSConfig{

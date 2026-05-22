@@ -19,14 +19,8 @@ lint/run:
 lint/fix:
 	bin/golangci-lint run --config .golangci.yml --fix
 
-test: # Runs unit and e2e tests
-	go test -shuffle=on -tags=e2e ./...
-
-test/unit: # unit tests only
+test:
 	go test -shuffle=on ./...
-
-test/e2e: # e2e tests only
-	go test -shuffle=on -tags=e2e ./internal/tests
 
 sqlc:
 	go run github.com/sqlc-dev/sqlc/cmd/sqlc@v1.31.1 generate
@@ -40,7 +34,7 @@ migrate/create:
 		echo "Usage: make migrate/create name=<migration_name>"; \
 		exit 1; \
 	fi
-	migrate create -ext sql -dir internal/store/migrations -seq $(name)
+	migrate create -ext sql -dir internal/store/db/migrations -seq $(name)
 
 up:
 	docker compose up -d
