@@ -1,10 +1,16 @@
 package admin_test
 
 import (
+	"context"
+	"errors"
+	"net/http"
+
 	"github.com/google/uuid"
 
+	"github.com/keto-granola/server/internal/apperr"
 	"github.com/keto-granola/server/internal/product"
 	"github.com/keto-granola/server/internal/product/admin"
+	"github.com/keto-granola/server/internal/product/mocks"
 )
 
 const (
@@ -15,7 +21,7 @@ const (
 	subIngredient4 = "sub4"
 )
 
-var createProductReqBody = &product.CreateProductParams{
+var createProdReqBody = &product.CreateProductParams{
 	Name:        "Test Granola  ",
 	Description: "   Test Description",
 	Ingredients: []product.Ingredient{
@@ -47,7 +53,7 @@ var createProductReqBody = &product.CreateProductParams{
 	ImageAlt:        "test alt  ",
 }
 
-var expectedCreateProductParams = &product.CreateProductParams{
+var expCreateProdParams = &product.CreateProductParams{
 	Name:        "Test Granola",
 	Description: "Test Description",
 	Ingredients: []product.Ingredient{
@@ -110,7 +116,7 @@ var insertedProd = &product.Product{
 	ImageStorageKey: "test/183839-key",
 }
 
-var expectedCreateProducRes = admin.CreateProductResponse{
+var expCreateProdRes = admin.CreateProductResponse{
 	ID:          insertedProd.ID,
 	Name:        insertedProd.Name,
 	Description: insertedProd.Description,
@@ -123,4 +129,102 @@ var expectedCreateProducRes = admin.CreateProductResponse{
 	Currency:    insertedProd.Currency,
 	ImageAlt:    insertedProd.ImageAlt,
 	ImageURL:    "",
+}
+
+type testCase struct {
+	name           string
+	reqBody        product.CreateProductParams
+	arrange        func() *admin.Handler
+	wantHTTPStatus int
+	expectedErrMsg string
+}
+
+var arrangeValidationCases = func() *admin.Handler {
+	mockRepo := &mocks.RepositoryMock{
+		InsertProductFunc: func(ctx context.Context, params *product.CreateProductParams) (*product.Product, error) {
+			return insertedProd, nil
+		},
+	}
+
+	h := admin.NewHandler(admin.NewService(mockRepo))
+	return h
+}
+
+var createProdUnhappyPathTestCases = []testCase{
+	{
+		name: "validation - missing ingredient percentage",
+		reqBody: product.CreateProductParams{
+			Name:        createProdReqBody.Name,
+			Description: createProdReqBody.Description,
+			Ingredients: []product.Ingredient{
+				{Name: ingredient1, SubIngredients: []string{}, Percentage: 80},
+				{Name: "ing2 ", SubIngredients: []string{subIngedient1, subIngredient2, "SUB1", "sub2 ", "Sub1"}},
+			},
+			Nutrition:       createProdReqBody.Nutrition,
+			WeightG:         createProdReqBody.WeightG,
+			DietaryTags:     createProdReqBody.DietaryTags,
+			Allergens:       createProdReqBody.Allergens,
+			PriceCents:      createProdReqBody.PriceCents,
+			Currency:        createProdReqBody.Currency,
+			ImageStorageKey: createProdReqBody.ImageStorageKey,
+			ImageAlt:        createProdReqBody.ImageAlt,
+		},
+		arrange:        arrangeValidationCases,
+		wantHTTPStatus: http.StatusBadRequest,
+		expectedErrMsg: apperr.ErrMsgValidation,
+	},
+	{
+		name: "validation - missing ingredients",
+		reqBody: product.CreateProductParams{
+			Name:            createProdReqBody.Name,
+			Description:     createProdReqBody.Description,
+			Ingredients:     []product.Ingredient{},
+			Nutrition:       createProdReqBody.Nutrition,
+			WeightG:         createProdReqBody.WeightG,
+			DietaryTags:     createProdReqBody.DietaryTags,
+			Allergens:       createProdReqBody.Allergens,
+			PriceCents:      createProdReqBody.PriceCents,
+			Currency:        createProdReqBody.Currency,
+			ImageStorageKey: createProdReqBody.ImageStorageKey,
+			ImageAlt:        createProdReqBody.ImageAlt,
+		},
+		arrange:        arrangeValidationCases,
+		wantHTTPStatus: http.StatusBadRequest,
+		expectedErrMsg: apperr.ErrMsgValidation,
+	},
+	{
+		name: "validation - invalid currency",
+		reqBody: product.CreateProductParams{
+			Name:            createProdReqBody.Name,
+			Description:     createProdReqBody.Description,
+			Ingredients:     createProdReqBody.Ingredients,
+			Nutrition:       createProdReqBody.Nutrition,
+			WeightG:         createProdReqBody.WeightG,
+			DietaryTags:     createProdReqBody.DietaryTags,
+			Allergens:       createProdReqBody.Allergens,
+			PriceCents:      createProdReqBody.PriceCents,
+			Currency:        createProdReqBody.Currency,
+			ImageStorageKey: createProdReqBody.ImageStorageKey,
+			ImageAlt:        createProdReqBody.ImageAlt,
+		},
+		arrange:        arrangeValidationCases,
+		wantHTTPStatus: http.StatusBadRequest,
+		expectedErrMsg: apperr.ErrMsgValidation,
+	},
+	{
+		name:    "internal server error",
+		reqBody: *createProdReqBody,
+		arrange: func() *admin.Handler {
+			mockRepo := &mocks.RepositoryMock{
+				InsertProductFunc: func(ctx context.Context, params *product.CreateProductParams) (*product.Product, error) {
+					return nil, errors.New("db internal server error")
+				},
+			}
+
+			h := admin.NewHandler(admin.NewService(mockRepo))
+			return h
+		},
+		wantHTTPStatus: http.StatusInternalServerError,
+		expectedErrMsg: apperr.ErrMsgInternal,
+	},
 }

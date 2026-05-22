@@ -17,7 +17,7 @@ func Handle[Req any, Res any](handler Handler[Req, Res], statusCode int) echo.Ha
 		var req Req
 
 		if err := ctx.Bind(&req); err != nil {
-			return toHTTPError(apperr.Validation("request.Validate", "VALIDATION_ERROR", "invalid request"))
+			return toHTTPError(apperr.Validation("request.Validate", "VALIDATION_ERROR", apperr.ErrMsgValidation))
 		}
 
 		if err := ctx.Validate(req); err != nil {
@@ -36,7 +36,7 @@ func Handle[Req any, Res any](handler Handler[Req, Res], statusCode int) echo.Ha
 func toHTTPError(err error) *echo.HTTPError {
 	var appErr *apperr.AppError
 	if !errors.As(err, &appErr) {
-		return echo.NewHTTPError(http.StatusInternalServerError, "internal server error").SetInternal(err)
+		return echo.NewHTTPError(http.StatusInternalServerError, apperr.ErrMsgInternal).SetInternal(err)
 	}
 
 	switch appErr.Kind {
@@ -47,8 +47,8 @@ func toHTTPError(err error) *echo.HTTPError {
 	case apperr.KindValidation:
 		return echo.NewHTTPError(http.StatusBadRequest, appErr.Message)
 	case apperr.KindInternal:
-		return echo.NewHTTPError(http.StatusInternalServerError, "internal server error").SetInternal(appErr)
+		return echo.NewHTTPError(http.StatusInternalServerError, apperr.ErrMsgInternal).SetInternal(appErr)
 	default:
-		return echo.NewHTTPError(http.StatusInternalServerError, "internal server error").SetInternal(appErr)
+		return echo.NewHTTPError(http.StatusInternalServerError, apperr.ErrMsgInternal).SetInternal(appErr)
 	}
 }

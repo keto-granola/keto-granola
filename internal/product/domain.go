@@ -51,8 +51,8 @@ type NutritionValues struct {
 
 type Ingredient struct {
 	Name           string   `json:"name" validate:"required"`
-	SubIngredients []string `json:"sub_ingredients"`
-	Percentage     float64  `json:"percentage"`
+	SubIngredients []string `json:"sub_ingredients" validate:"required"`
+	Percentage     float64  `json:"percentage" validate:"required"`
 }
 
 type CreateProductParams struct {

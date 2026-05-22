@@ -19,7 +19,7 @@ func TestCreateProduct_HappyPath(t *testing.T) {
 	t.Run("returns new product successfully", func(t *testing.T) {
 		mockRepo := mocks.RepositoryMock{
 			InsertProductFunc: func(ctx context.Context, params *product.CreateProductParams) (*product.Product, error) {
-				if diff := cmp.Diff(expectedCreateProductParams, params); diff != "" {
+				if diff := cmp.Diff(expCreateProdParams, params); diff != "" {
 					t.Errorf("repo received wrong params (-want +got):\n%s", diff)
 				}
 
@@ -27,7 +27,7 @@ func TestCreateProduct_HappyPath(t *testing.T) {
 			},
 		}
 
-		ctx, rec := testhelpers.SetupEchoContext(t, createProductReqBody, http.MethodPost, "/admin/products")
+		ctx, rec := testhelpers.SetupEchoContext(t, createProdReqBody, http.MethodPost, "/admin/products")
 
 		h := admin.NewHandler(admin.NewService(&mockRepo))
 
@@ -46,7 +46,7 @@ func TestCreateProduct_HappyPath(t *testing.T) {
 			t.Fatalf("unmarshal response: %v", err)
 		}
 
-		if diff := cmp.Diff(expectedCreateProducRes, actual); diff != "" {
+		if diff := cmp.Diff(expCreateProdRes, actual); diff != "" {
 			t.Errorf("product mismatch (-want +got):\n%s", diff)
 		}
 
@@ -55,10 +55,16 @@ func TestCreateProduct_HappyPath(t *testing.T) {
 }
 
 func TestCreateProduct_UnhappyPath(t *testing.T) {
-	// validation test cases:
-	// wrong ingredient property e.g. ingredients: [ {ingredient: “”}]
-	// invalid currency
-	// empty ingredients
-	// missing ingredient property (e.g. percentage)
-	// missing nutrition property?
+	for _, tt := range createProdUnhappyPathTestCases {
+		t.Run(tt.name, func(t *testing.T) {
+			h := tt.arrange()
+
+			ctx, _ := testhelpers.SetupEchoContext(t, tt.reqBody, http.MethodPost, "/admin/products")
+
+			handlerFunc := server.Handle(h.CreateProduct, http.StatusCreated)
+			err := handlerFunc(ctx)
+
+			testhelpers.AssertHTTPError(t, err, tt.wantHTTPStatus, tt.expectedErrMsg)
+		})
+	}
 }

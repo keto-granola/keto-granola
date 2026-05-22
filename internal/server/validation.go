@@ -25,7 +25,7 @@ func (cv *customValidator) Validate(i any) error {
 
 	var validationErrors validator.ValidationErrors
 	if errors.As(err, &validationErrors) {
-		return apperr.Validation("request.Validate", "VALIDATION_ERROR", "invalid request")
+		return apperr.Validation("request.Validate", "VALIDATION_ERROR", apperr.ErrMsgValidation)
 	}
 
 	return apperr.Internal("request.Validate", err)
