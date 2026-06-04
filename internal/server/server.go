@@ -2,6 +2,8 @@ package server
 
 import (
 	"context"
+	"embed"
+	"html/template"
 	"log/slog"
 	"net/http"
 	"time"
@@ -12,6 +14,8 @@ import (
 	"github.com/keto-granola/server/internal/config"
 	"github.com/keto-granola/server/internal/middleware"
 	productadmin "github.com/keto-granola/server/internal/product/admin"
+	productweb "github.com/keto-granola/server/internal/product/web"
+	"github.com/keto-granola/server/internal/server/templates/templatehelpers"
 	"github.com/keto-granola/server/internal/store"
 )
 
@@ -29,32 +33,50 @@ const (
 )
 
 type Server struct {
-	instance *echo.Echo
+	echo      *echo.Echo
+	templates *template.Template
 }
 
 type Handlers struct {
+	// api handlers
 	ProductAdmin *productadmin.Handler
+
+	// web handlers
+	Product *productweb.Handler
 }
 
-func New(ctx context.Context, environment config.Environment, clientURL string, handlers *Handlers, dataStore *store.Store) *Server {
-	instance := echo.New()
-	NewValidator(instance)
-	instance.HideBanner = true // Prevents startup banner from being logged
+//go:embed templates
+var templateFS embed.FS
 
-	instance.Use(echoMiddleware.CORSWithConfig(echoMiddleware.CORSConfig{
+func New(ctx context.Context, environment config.Environment, clientURL string, handlers *Handlers, dataStore *store.Store) *Server {
+	e := echo.New()
+	NewValidator(e)
+	e.HideBanner = true // prevents startup banner from being logged
+
+	e.Use(echoMiddleware.CORSWithConfig(echoMiddleware.CORSConfig{
 		AllowOrigins: []string{clientURL},
 	}))
 
-	instance.Use(middleware.Log)
+	e.Use(middleware.Log)
 
 	// limits each unique IP to 60 requests per minute with a burst of 120.
-	instance.Use(echoMiddleware.RateLimiter(echoMiddleware.NewRateLimiterMemoryStoreWithConfig(
+	e.Use(echoMiddleware.RateLimiter(echoMiddleware.NewRateLimiterMemoryStoreWithConfig(
 		echoMiddleware.RateLimiterMemoryStoreConfig{
 			Rate:      serverRateLimit,
 			Burst:     serverBurstLimit,
 			ExpiresIn: time.Minute,
 		},
 	)))
+
+	var templates = template.Must(
+		template.New("").Funcs(templatehelpers.FuncMap()).ParseFS(templateFS, "internal/templates/**/*.html"),
+	)
+
+	web := e.Group("/")
+	api := e.Group(config.APIBasePath)
+
+	apiPublic := api.Group("")
+	apiPrivate := api.Group("")
 
 	if environment == config.EnvironmentTest {
 		// TODO: run test middleware
@@ -64,22 +86,20 @@ func New(ctx context.Context, environment config.Environment, clientURL string, 
 		slog.Info("run auth middleware")
 	}
 
-	public := instance.Group("/" + config.APIVersion)
-	private := instance.Group("/" + config.APIVersion)
+	registerRoutes(apiPublic, apiPrivate, web, handlers, dataStore)
 
-	registerRoutes(public, private, handlers, dataStore)
-
-	instance.Server.ReadTimeout = readTimeout
-	instance.Server.WriteTimeout = writeTimeout
-	instance.Server.IdleTimeout = idleTimeout
+	e.Server.ReadTimeout = readTimeout
+	e.Server.WriteTimeout = writeTimeout
+	e.Server.IdleTimeout = idleTimeout
 
 	return &Server{
-		instance: instance,
+		echo:      e,
+		templates: templates,
 	}
 }
 
 func (s *Server) Start(port string) error {
-	if err := s.instance.Start(":" + port); err != nil && err != http.ErrServerClosed {
+	if err := s.echo.Start(":" + port); err != nil && err != http.ErrServerClosed {
 		slog.Error("start server", slog.Any("error", err))
 		return err
 	}
@@ -91,5 +111,5 @@ func (s *Server) Stop() error {
 	ctx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
 	defer cancel()
 
-	return s.instance.Shutdown(ctx)
+	return s.echo.Shutdown(ctx)
 }

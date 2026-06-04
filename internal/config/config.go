@@ -15,7 +15,9 @@ const (
 	EnvironmentProduction  Environment = "production"
 	EnvironmentTest        Environment = "test"
 
-	APIVersion = "v1"
+	APIPrefix   = "api"
+	APIVersion  = "v1"
+	APIBasePath = "/" + APIPrefix + "/" + APIVersion
 )
 
 type App struct {

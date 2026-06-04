@@ -36,9 +36,6 @@ func (s *ProductService) CreateProduct(ctx context.Context, params *product.Crea
 		return nil, err
 	}
 
-	// TODO: construct CDN URL
-	cdnURL := ""
-
 	return &CreateProductResponse{
 		ID:          newProd.ID,
 		Name:        newProd.Name,
@@ -50,7 +47,7 @@ func (s *ProductService) CreateProduct(ctx context.Context, params *product.Crea
 		Allergens:   newProd.Allergens,
 		PriceCents:  newProd.PriceCents,
 		Currency:    newProd.Currency,
-		ImageURL:    cdnURL,
+		ImageURL:    getCDNUploadURL(newProd.ImageStorageKey),
 		ImageAlt:    newProd.ImageAlt,
 	}, nil
 }
@@ -105,4 +102,9 @@ func normaliseIngredients(ingredients []product.Ingredient) []product.Ingredient
 	})
 
 	return out
+}
+
+// TODO: implement
+func getCDNUploadURL(storageKey string) string {
+	return storageKey
 }

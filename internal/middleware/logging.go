@@ -40,7 +40,7 @@ func Log(next echo.HandlerFunc) echo.HandlerFunc {
 		status := responseStatus(e, err)
 
 		// ignore 404s for paths outside the API prefix (e.g. favicon.ico)
-		if status == http.StatusNotFound && !strings.HasPrefix(req.URL.Path, "/"+config.APIVersion) {
+		if status == http.StatusNotFound && !strings.HasPrefix(req.URL.Path, config.APIBasePath) {
 			return err
 		}
 

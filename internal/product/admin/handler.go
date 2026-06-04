@@ -12,8 +12,8 @@ type Handler struct {
 	service *ProductService
 }
 
-func NewHandler(s *ProductService) *Handler {
-	return &Handler{service: s}
+func NewHandler(svc *ProductService) *Handler {
+	return &Handler{service: svc}
 }
 
 type CreateProductResponse struct {

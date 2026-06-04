@@ -42,12 +42,12 @@ func run() error {
 	}
 	defer dataStore.Close()
 
-	instance := server.New(ctx, cfg.Environment, cfg.ClientURL, composeHandlers(dataStore), dataStore)
+	echo := server.New(ctx, cfg.Environment, cfg.ClientURL, composeHandlers(dataStore), dataStore)
 
 	serverErr := make(chan error, 1)
 
 	go func() {
-		serverErr <- instance.Start(cfg.Port)
+		serverErr <- echo.Start(cfg.Port)
 	}()
 
 	select {
@@ -56,7 +56,7 @@ func run() error {
 	case err = <-serverErr:
 	}
 
-	if shutdownErr := instance.Stop(); shutdownErr != nil {
+	if shutdownErr := echo.Stop(); shutdownErr != nil {
 		slog.Error("server shutdown", slog.Any("error", shutdownErr))
 	}
 

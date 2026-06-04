@@ -5,6 +5,7 @@ package mocks
 
 import (
 	"context"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/keto-granola/server/internal/product"
 	"sync"
 )
@@ -19,6 +20,9 @@ var _ product.Repository = &RepositoryMock{}
 //
 //		// make and configure a mocked product.Repository
 //		mockedRepository := &RepositoryMock{
+//			GetProductFunc: func(ctx context.Context, ID pgtype.UUID) (*product.Product, error) {
+//				panic("mock out the GetProduct method")
+//			},
 //			InsertProductFunc: func(ctx context.Context, params *product.CreateProductParams) (*product.Product, error) {
 //				panic("mock out the InsertProduct method")
 //			},
@@ -29,11 +33,21 @@ var _ product.Repository = &RepositoryMock{}
 //
 //	}
 type RepositoryMock struct {
+	// GetProductFunc mocks the GetProduct method.
+	GetProductFunc func(ctx context.Context, ID pgtype.UUID) (*product.Product, error)
+
 	// InsertProductFunc mocks the InsertProduct method.
 	InsertProductFunc func(ctx context.Context, params *product.CreateProductParams) (*product.Product, error)
 
 	// calls tracks calls to the methods.
 	calls struct {
+		// GetProduct holds details about calls to the GetProduct method.
+		GetProduct []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
+			// ID is the ID argument value.
+			ID pgtype.UUID
+		}
 		// InsertProduct holds details about calls to the InsertProduct method.
 		InsertProduct []struct {
 			// Ctx is the ctx argument value.
@@ -42,7 +56,44 @@ type RepositoryMock struct {
 			Params *product.CreateProductParams
 		}
 	}
+	lockGetProduct    sync.RWMutex
 	lockInsertProduct sync.RWMutex
+}
+
+// GetProduct calls GetProductFunc.
+func (mock *RepositoryMock) GetProduct(ctx context.Context, ID pgtype.UUID) (*product.Product, error) {
+	if mock.GetProductFunc == nil {
+		panic("RepositoryMock.GetProductFunc: method is nil but Repository.GetProduct was just called")
+	}
+	callInfo := struct {
+		Ctx context.Context
+		ID  pgtype.UUID
+	}{
+		Ctx: ctx,
+		ID:  ID,
+	}
+	mock.lockGetProduct.Lock()
+	mock.calls.GetProduct = append(mock.calls.GetProduct, callInfo)
+	mock.lockGetProduct.Unlock()
+	return mock.GetProductFunc(ctx, ID)
+}
+
+// GetProductCalls gets all the calls that were made to GetProduct.
+// Check the length with:
+//
+//	len(mockedRepository.GetProductCalls())
+func (mock *RepositoryMock) GetProductCalls() []struct {
+	Ctx context.Context
+	ID  pgtype.UUID
+} {
+	var calls []struct {
+		Ctx context.Context
+		ID  pgtype.UUID
+	}
+	mock.lockGetProduct.RLock()
+	calls = mock.calls.GetProduct
+	mock.lockGetProduct.RUnlock()
+	return calls
 }
 
 // InsertProduct calls InsertProductFunc.

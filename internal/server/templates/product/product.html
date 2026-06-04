@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="module" src="/assets/main.js"></script>
+</head>
+<body>
+  <div class="product-hero">
+    <h1>{{.Name}}</h1>
+    <p>{{.Description}}</p>
+    <img src="{{.ImageURL}}" alt="{{.ImageAlt}}">
+    <p class="price">{{.Currency}}{{.Price}}</p>
+     <div 
+        id="add-to-cart"
+        data-product-id="{{.ID}}"
+      ></div>
+  </div>
+  <div class="product-nutrition">
+    <div class="product-ingredients">
+        {{ingredientList .Ingredients}}
+    </div>
+    <div class="product-allergens">
+    </div>
+    <div class="product-nutrition-info">
+      <p>{{.Nutrition}}</p>
+    </div>
+    <ul class="product-dietary">
+      {{range .DietaryTags}}
+      <li>{{.}}</li>
+    </ul>
+  </div>
+</body>
+</html>

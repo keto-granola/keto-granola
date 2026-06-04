@@ -24,15 +24,15 @@ func SetupEchoContext(
 	t.Helper()
 	ctx := context.Background()
 
-	instance := echo.New()
-	server.NewValidator(instance)
+	e := echo.New()
+	server.NewValidator(e)
 
 	jsonBytes, err := json.Marshal(reqBody)
 	if err != nil {
 		t.Fatalf("marshal request body: %v", err)
 	}
 
-	targetURL := fmt.Sprintf("/%s/%s", config.APIVersion, endpoint)
+	targetURL := fmt.Sprintf("%s/%s", config.APIBasePath, endpoint)
 	var req *http.Request
 
 	switch method {
@@ -47,7 +47,7 @@ func SetupEchoContext(
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
 	rec := httptest.NewRecorder()
-	return instance.NewContext(req, rec), rec
+	return e.NewContext(req, rec), rec
 }
 
 func AssertHTTPError(t *testing.T, err error, expectedCode int, expectedMsg string) {

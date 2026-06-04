@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const (
@@ -15,6 +16,7 @@ const (
 
 type Repository interface {
 	InsertProduct(ctx context.Context, params *CreateProductParams) (*Product, error)
+	GetProduct(ctx context.Context, ID pgtype.UUID) (*Product, error)
 }
 
 type Product struct {
