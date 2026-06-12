@@ -4,9 +4,10 @@ import (
 	"html/template"
 
 	"github.com/google/uuid"
+	"github.com/labstack/echo/v4"
+
 	"github.com/keto-granola/server/internal/apperr"
 	"github.com/keto-granola/server/internal/product"
-	"github.com/labstack/echo/v4"
 )
 
 type Handler struct {

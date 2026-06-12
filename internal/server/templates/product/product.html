@@ -8,7 +8,7 @@
     <h1>{{.Name}}</h1>
     <p>{{.Description}}</p>
     <img src="{{.ImageURL}}" alt="{{.ImageAlt}}">
-    <p class="price">{{.Currency}}{{.Price}}</p>
+    <p class="price">{{.Currency}}{{formatPrice .Price}}</p>
      <div 
         id="add-to-cart"
         data-product-id="{{.ID}}"

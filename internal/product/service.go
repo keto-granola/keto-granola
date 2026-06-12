@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+
 	"github.com/keto-granola/server/internal/store/db/utils"
 )
 
@@ -29,14 +30,14 @@ type GetProductResponse struct {
 	Nutrition   NutritionView
 	DietaryTags []string
 	Allergens   []string
-	Price       float32
+	PriceCents  int32
 	Currency    string
 	ImageURL    string
 	ImageAlt    string
 }
 
-func (s *Service) GetProduct(ctx context.Context, ID uuid.UUID) (*GetProductResponse, error) {
-	pgUUID := utils.PGUUIDFromUUID(ID)
+func (s *Service) GetProduct(ctx context.Context, id uuid.UUID) (*GetProductResponse, error) {
+	pgUUID := utils.PGUUIDFromUUID(id)
 
 	prod, err := s.store.GetProduct(ctx, pgUUID)
 	if err != nil {
@@ -48,10 +49,10 @@ func (s *Service) GetProduct(ctx context.Context, ID uuid.UUID) (*GetProductResp
 		Name:        prod.Name,
 		Description: prod.Description,
 		Ingredients: prod.Ingredients,
-		Nutrition:   toNutritionView(prod.Nutrition),
+		Nutrition:   toNutritionView(&prod.Nutrition),
 		DietaryTags: prod.DietaryTags,
 		Allergens:   prod.Allergens,
-		Price:       float32(prod.PriceCents) / 100,
+		PriceCents:  prod.PriceCents,
 		Currency:    prod.Currency,
 		ImageURL:    getCDNDownloadURL(prod.ImageStorageKey),
 		ImageAlt:    prod.ImageAlt,
@@ -63,7 +64,7 @@ func getCDNDownloadURL(storageKey string) string {
 	return storageKey
 }
 
-func toNutritionView(nutrition Nutrition) NutritionView {
+func toNutritionView(nutrition *Nutrition) NutritionView {
 	return NutritionView{
 		Per100g: nutrition.Per100g,
 		// TODO: implement this

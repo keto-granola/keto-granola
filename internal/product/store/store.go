@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 
 	"github.com/jackc/pgx/v5/pgtype"
+
 	"github.com/keto-granola/server/internal/apperr"
 	"github.com/keto-granola/server/internal/product"
 	"github.com/keto-granola/server/internal/store"
@@ -107,7 +108,6 @@ func fetchedProductFrom(row *generated.GetProductRow) (*product.Product, error) 
 		Description:     row.Description,
 		Ingredients:     ingredients,
 		Nutrition:       nutrition,
-		WeightG:         row.WeightG,
 		DietaryTags:     row.DietaryTags,
 		Allergens:       row.Allergens,
 		PriceCents:      row.PriceCents,
@@ -117,9 +117,9 @@ func fetchedProductFrom(row *generated.GetProductRow) (*product.Product, error) 
 	}, nil
 }
 
-func (s *Store) GetProduct(ctx context.Context, ID pgtype.UUID) (*product.Product, error) {
+func (s *Store) GetProduct(ctx context.Context, id pgtype.UUID) (*product.Product, error) {
 	row, err := store.ExecQuery(ctx, func() (generated.GetProductRow, error) {
-		return s.queries.GetProduct(ctx, ID)
+		return s.queries.GetProduct(ctx, id)
 	})
 
 	if err != nil {
