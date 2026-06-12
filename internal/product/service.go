@@ -2,6 +2,7 @@ package product
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/google/uuid"
 
@@ -61,7 +62,8 @@ func (s *Service) GetProduct(ctx context.Context, id uuid.UUID) (*GetProductResp
 
 // TODO: implement
 func getCDNDownloadURL(storageKey string) string {
-	return storageKey
+	fmt.Println(">>> storageKey: ", storageKey)
+	return ""
 }
 
 func toNutritionView(nutrition *Nutrition) NutritionView {

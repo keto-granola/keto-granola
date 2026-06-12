@@ -2,6 +2,7 @@ package admin
 
 import (
 	"context"
+	"fmt"
 	"sort"
 	"strings"
 
@@ -106,5 +107,6 @@ func normaliseIngredients(ingredients []product.Ingredient) []product.Ingredient
 
 // TODO: implement
 func getCDNUploadURL(storageKey string) string {
-	return storageKey
+	fmt.Println(">>> storageKey: ", storageKey)
+	return ""
 }
