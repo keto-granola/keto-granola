@@ -1,20 +1,11 @@
 services:
-  postgres:
-    image: postgres:18-alpine
-    environment:
-      POSTGRES_USER: ci
-      POSTGRES_PASSWORD: ci
-      POSTGRES_DB: keto-granola-ci
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ci"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
-
   keto-granola-server:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: keto-granola-server
+    ports:
+      - "3001:3001"
     environment:
       DB_URL: postgres://ci:ci@postgres:5432/keto-granola-ci?sslmode=disable
       SERVER_PORT: 3001
@@ -30,3 +21,18 @@ services:
       timeout: 3s
       retries: 10
       start_period: 10s
+      
+  postgres:
+    image: postgres:18-alpine
+    container_name: keto-granola-db
+    environment:
+      POSTGRES_USER: ci
+      POSTGRES_PASSWORD: ci
+      POSTGRES_DB: keto-granola-ci
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ci"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  
