@@ -69,7 +69,7 @@ func New(ctx context.Context, environment config.Environment, clientURL string, 
 	)))
 
 	var templates = template.Must(
-		template.New("").Funcs(templatehelpers.FuncMap()).ParseFS(templateFS, "internal/templates/**/*.html"),
+		template.New("").Funcs(templatehelpers.FuncMap()).ParseFS(templateFS, "templates/**/*.html"),
 	)
 
 	web := e.Group("/")

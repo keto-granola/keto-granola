@@ -16,12 +16,12 @@ make dep
 
 ### Run with docker:
 ```
-docker-compose up -d
+docker compose up -d
 ```
 
 ### Run without docker:
 ```
-docker-compose up -d postgres # run only postgres via docker
+docker compose up -d postgres # run only postgres via docker
 make run
 ```
 

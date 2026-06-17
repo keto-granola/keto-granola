@@ -1,31 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script type="module" src="/assets/main.js"></script>
+  {{if eq .Environment "development"}}
+  <script type="module" src="{{.ClientURL}}/src/main.tsx"></script>
+  {{else}}
+  <script type="module" src="/assets/islands.js"></script>
+  {{end}}
 </head>
 <body>
   <div class="product-hero">
-    <h1>{{.Name}}</h1>
-    <p>{{.Description}}</p>
-    <img src="{{.ImageURL}}" alt="{{.ImageAlt}}">
-    <p class="price">{{.Currency}}{{formatPrice .Price}}</p>
+    <h1>{{.Product.Name}}</h1>
+    <p>{{.Product.Description}}</p>
+    <img src="{{.Product.ImageURL}}" alt="{{.Product.ImageAlt}}">
+    <p class="price">{{.Product.Currency}}{{centsToPrice .Product.Price}}</p>
      <div 
         id="add-to-cart"
-        data-product-id="{{.ID}}"
+        data-product-id="{{.Product.ID}}"
       ></div>
   </div>
   <div class="product-nutrition">
     <div class="product-ingredients">
-        {{ingredientList .Ingredients}}
+        {{ingredientList .Product.Ingredients}}
     </div>
     <div class="product-allergens">
     </div>
     <div class="product-nutrition-info">
-      <p>{{.Nutrition}}</p>
+      <p>{{.Product.Nutrition}}</p>
     </div>
     <ul class="product-dietary">
-      {{range .DietaryTags}}
+      {{range .Product.DietaryTags}}
       <li>{{.}}</li>
+      {{end}}
     </ul>
   </div>
 </body>
