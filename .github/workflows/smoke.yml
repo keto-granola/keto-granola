@@ -1,0 +1,19 @@
+smoke-test:
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v5
+
+    - name: Build and start
+      run: docker compose -f docker-compose.ci.yml up -d --build
+
+    - name: Wait for app healthy
+      run: |
+        timeout 60 bash -c \
+          'until [ "$(docker inspect --format="{{.State.Health.Status}}" keto-granola-server)" = "healthy" ]; do sleep 2; done'
+
+    - name: Smoke test
+      run: curl --fail http://localhost:3001/api/v1/health
+
+    - name: Teardown
+      if: always()
+      run: docker compose -f docker-compose.ci.yml down -v
