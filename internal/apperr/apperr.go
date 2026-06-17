@@ -1,9 +1,13 @@
 package apperr
 
 import (
+	"errors"
 	"fmt"
+	"net/http"
 	"runtime"
 	"strings"
+
+	"github.com/labstack/echo/v4"
 )
 
 // Kind categorises errors so callers can branch without string matching.
@@ -104,4 +108,24 @@ func Validation(operation, code, message string) *AppError {
 
 func Internal(operation string, err error) *AppError {
 	return Wrap(err, operation, "INTERNAL_ERROR", ErrMsgInternal, KindInternal)
+}
+
+func ToHTTPError(err error) *echo.HTTPError {
+	var appErr *AppError
+	if !errors.As(err, &appErr) {
+		return echo.NewHTTPError(http.StatusInternalServerError, ErrMsgInternal).SetInternal(err)
+	}
+
+	switch appErr.Kind {
+	case KindNotFound:
+		return echo.NewHTTPError(http.StatusNotFound, appErr.Message)
+	case KindUnauthorized:
+		return echo.NewHTTPError(http.StatusUnauthorized, appErr.Message)
+	case KindValidation:
+		return echo.NewHTTPError(http.StatusBadRequest, appErr.Message)
+	case KindInternal:
+		return echo.NewHTTPError(http.StatusInternalServerError, ErrMsgInternal).SetInternal(appErr)
+	default:
+		return echo.NewHTTPError(http.StatusInternalServerError, ErrMsgInternal).SetInternal(appErr)
+	}
 }

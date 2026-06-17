@@ -4,8 +4,11 @@ import (
 	"context"
 	"encoding/json"
 
+	"github.com/jackc/pgx/v5/pgtype"
+
 	"github.com/keto-granola/server/internal/apperr"
 	"github.com/keto-granola/server/internal/product"
+	"github.com/keto-granola/server/internal/product/admin"
 	"github.com/keto-granola/server/internal/store"
 	"github.com/keto-granola/server/internal/store/db/generated"
 	"github.com/keto-granola/server/internal/store/db/utils"
@@ -19,7 +22,7 @@ func New(queries *generated.Queries) *Store {
 	return &Store{queries: queries}
 }
 
-func (s *Store) InsertProduct(ctx context.Context, params *product.CreateProductParams) (*product.Product, error) {
+func (s *Store) InsertProduct(ctx context.Context, params *admin.CreateProductParams) (*product.Product, error) {
 	insertParams, err := toInsertProductParams(params)
 	if err != nil {
 		return nil, err
@@ -36,7 +39,7 @@ func (s *Store) InsertProduct(ctx context.Context, params *product.CreateProduct
 	return insertedProductFrom(&row)
 }
 
-func toInsertProductParams(params *product.CreateProductParams) (*generated.InsertProductParams, error) {
+func toInsertProductParams(params *admin.CreateProductParams) (*generated.InsertProductParams, error) {
 	ingredients, err := json.Marshal(params.Ingredients)
 	if err != nil {
 		return nil, apperr.Internal("Store.InsertProduct", err)
@@ -87,4 +90,42 @@ func insertedProductFrom(row *generated.InsertProductRow) (*product.Product, err
 		ImageStorageKey: row.ImageStorageKey,
 		ImageAlt:        row.ImageAlt,
 	}, nil
+}
+
+func fetchedProductFrom(row *generated.GetProductRow) (*product.Product, error) {
+	var ingredients []product.Ingredient
+	if err := json.Unmarshal(row.Ingredients, &ingredients); err != nil {
+		return nil, apperr.Internal("Store.GetProduct", err)
+	}
+
+	var nutrition product.Nutrition
+	if err := json.Unmarshal(row.Nutrition, &nutrition); err != nil {
+		return nil, apperr.Internal("Store.GetProduct", err)
+	}
+
+	return &product.Product{
+		ID:              utils.UUIDFrom(row.ID),
+		Name:            row.Name,
+		Description:     row.Description,
+		Ingredients:     ingredients,
+		Nutrition:       nutrition,
+		DietaryTags:     row.DietaryTags,
+		Allergens:       row.Allergens,
+		PriceCents:      row.PriceCents,
+		Currency:        row.Currency,
+		ImageStorageKey: row.ImageStorageKey,
+		ImageAlt:        row.ImageAlt,
+	}, nil
+}
+
+func (s *Store) GetProduct(ctx context.Context, id pgtype.UUID) (*product.Product, error) {
+	row, err := store.ExecQuery(ctx, func() (generated.GetProductRow, error) {
+		return s.queries.GetProduct(ctx, id)
+	})
+
+	if err != nil {
+		return nil, apperr.Internal("Store.GetProduct", err)
+	}
+
+	return fetchedProductFrom(&row)
 }

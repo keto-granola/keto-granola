@@ -1,5 +1,5 @@
 # Keto Granola server 
-Go server for keto granola e-commerce platform using Echo for HTTP routing, PostgreSQL for data persistence, and sqlc for type-safe database queries.
+Go server for keto granola e-commerce platform using Echo for HTTP routing, PostgreSQL for data persistence, and sqlc for type-safe database queries. Handles SSR for product pages with html/template.
 
 ## App architecture
 ![high-level system architecture](apparchitecture.png)
@@ -16,12 +16,12 @@ make dep
 
 ### Run with docker:
 ```
-docker-compose up -d
+docker compose up -d
 ```
 
 ### Run without docker:
 ```
-docker-compose up -d postgres # run only postgres via docker
+docker compose up -d postgres # run only postgres via docker
 make run
 ```
 

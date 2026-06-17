@@ -14,8 +14,11 @@ const (
 	EnvironmentDevelopment Environment = "development"
 	EnvironmentProduction  Environment = "production"
 	EnvironmentTest        Environment = "test"
+	EnvironmentCI          Environment = "ci"
 
-	APIVersion = "v1"
+	APIPrefix   = "api"
+	APIVersion  = "v1"
+	APIBasePath = "/" + APIPrefix + "/" + APIVersion
 )
 
 type App struct {
@@ -32,6 +35,7 @@ var validEnvironments = []Environment{
 	EnvironmentDevelopment,
 	EnvironmentProduction,
 	EnvironmentTest,
+	EnvironmentCI,
 }
 
 var logLevelMap = map[string]slog.Level{
@@ -69,7 +73,7 @@ func ParseEnv() (*App, error) {
 
 	environment := Environment(envVars["ENVIRONMENT"])
 	if !slices.Contains(validEnvironments, environment) {
-		return nil, errors.New("ENVIRONMENT should be one of development|production|test")
+		return nil, errors.New("ENVIRONMENT should be one of development|production|test|ci")
 	}
 
 	return &App{

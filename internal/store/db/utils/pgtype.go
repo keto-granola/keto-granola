@@ -8,3 +8,7 @@ import (
 func UUIDFrom(pgUUID pgtype.UUID) uuid.UUID {
 	return uuid.UUID(pgUUID.Bytes)
 }
+
+func PGUUIDFromUUID(id uuid.UUID) pgtype.UUID {
+	return pgtype.UUID{Bytes: id, Valid: true}
+}

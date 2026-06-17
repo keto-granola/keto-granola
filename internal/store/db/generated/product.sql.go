@@ -12,6 +12,56 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const getProduct = `-- name: GetProduct :one
+SELECT
+  id,
+  name, 
+  description, 
+  ingredients, 
+  nutrition, 
+  dietary_tags, 
+  allergens, 
+  price_cents,
+  currency,
+  image_storage_key,
+  image_alt
+FROM products 
+WHERE id = $1
+`
+
+type GetProductRow struct {
+	ID              pgtype.UUID
+	Name            string
+	Description     string
+	Ingredients     json.RawMessage
+	Nutrition       json.RawMessage
+	DietaryTags     []string
+	Allergens       []string
+	PriceCents      int32
+	Currency        string
+	ImageStorageKey string
+	ImageAlt        string
+}
+
+func (q *Queries) GetProduct(ctx context.Context, id pgtype.UUID) (GetProductRow, error) {
+	row := q.db.QueryRow(ctx, getProduct, id)
+	var i GetProductRow
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Description,
+		&i.Ingredients,
+		&i.Nutrition,
+		&i.DietaryTags,
+		&i.Allergens,
+		&i.PriceCents,
+		&i.Currency,
+		&i.ImageStorageKey,
+		&i.ImageAlt,
+	)
+	return i, err
+}
+
 const insertProduct = `-- name: InsertProduct :one
 INSERT INTO products (
   name, 

@@ -12,15 +12,14 @@ import (
 
 const pingTimeout = 5 * time.Second
 
-func registerRoutes(public, private *echo.Group, handlers *Handlers, dataStore *store.Store) {
-	registerHealthEndpoint(public, dataStore)
-
-	// admin routes
-	private.POST("/admin/products", Handle(handlers.ProductAdmin.CreateProduct, http.StatusCreated))
+func registerRoutes(apiPublic, apiPrivate, web *echo.Group, handlers *Handlers, dataStore *store.Store) {
+	registerHealthEndpoint(apiPublic, dataStore)
+	registerAPIRoutes(apiPrivate, handlers)
+	registerWebRoutes(web, handlers)
 }
 
-func registerHealthEndpoint(public *echo.Group, dataStore *store.Store) {
-	public.GET("/health", func(e echo.Context) error {
+func registerHealthEndpoint(api *echo.Group, dataStore *store.Store) {
+	api.GET("/health", func(e echo.Context) error {
 		dbStatus := "ok"
 		httpStatus := http.StatusOK
 
@@ -38,4 +37,13 @@ func registerHealthEndpoint(public *echo.Group, dataStore *store.Store) {
 			"db":     dbStatus,
 		})
 	})
+}
+
+func registerAPIRoutes(apiPrivate *echo.Group, handlers *Handlers) {
+	// admin routes
+	apiPrivate.POST("/admin/products", Handle(handlers.ProductAdmin.CreateProduct, http.StatusCreated))
+}
+
+func registerWebRoutes(web *echo.Group, handlers *Handlers) {
+	web.GET("products/:id", handlers.Product.GetProductPage)
 }

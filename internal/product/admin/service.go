@@ -2,22 +2,23 @@ package admin
 
 import (
 	"context"
+	"fmt"
 	"sort"
 	"strings"
 
 	"github.com/keto-granola/server/internal/product"
 )
 
-type ProductService struct {
-	store product.Repository
+type Service struct {
+	store Repository
 }
 
-func NewService(store product.Repository) *ProductService {
-	return &ProductService{store: store}
+func NewService(store Repository) *Service {
+	return &Service{store: store}
 }
 
-func (s *ProductService) CreateProduct(ctx context.Context, params *product.CreateProductParams) (*CreateProductResponse, error) {
-	createProdParams := &product.CreateProductParams{
+func (s *Service) CreateProduct(ctx context.Context, params *CreateProductParams) (*CreateProductResponse, error) {
+	createProdParams := &CreateProductParams{
 		Name:            strings.TrimSpace(params.Name),
 		Description:     strings.TrimSpace(params.Description),
 		Ingredients:     normaliseIngredients(params.Ingredients),
@@ -36,9 +37,6 @@ func (s *ProductService) CreateProduct(ctx context.Context, params *product.Crea
 		return nil, err
 	}
 
-	// TODO: construct CDN URL
-	cdnURL := ""
-
 	return &CreateProductResponse{
 		ID:          newProd.ID,
 		Name:        newProd.Name,
@@ -50,7 +48,7 @@ func (s *ProductService) CreateProduct(ctx context.Context, params *product.Crea
 		Allergens:   newProd.Allergens,
 		PriceCents:  newProd.PriceCents,
 		Currency:    newProd.Currency,
-		ImageURL:    cdnURL,
+		ImageURL:    getCDNUploadURL(newProd.ImageStorageKey),
 		ImageAlt:    newProd.ImageAlt,
 	}, nil
 }
@@ -105,4 +103,10 @@ func normaliseIngredients(ingredients []product.Ingredient) []product.Ingredient
 	})
 
 	return out
+}
+
+// TODO: implement
+func getCDNUploadURL(storageKey string) string {
+	fmt.Println(">>> storageKey: ", storageKey)
+	return ""
 }

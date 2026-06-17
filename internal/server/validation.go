@@ -13,8 +13,8 @@ type customValidator struct {
 	validator *validator.Validate
 }
 
-func NewValidator(instance *echo.Echo) {
-	instance.Validator = &customValidator{validator: validator.New()}
+func NewValidator(e *echo.Echo) {
+	e.Validator = &customValidator{validator: validator.New()}
 }
 
 func (cv *customValidator) Validate(i any) error {

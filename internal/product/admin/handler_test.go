@@ -10,7 +10,7 @@ import (
 
 	"github.com/keto-granola/server/internal/product"
 	"github.com/keto-granola/server/internal/product/admin"
-	"github.com/keto-granola/server/internal/product/mocks"
+	"github.com/keto-granola/server/internal/product/admin/mocks"
 	"github.com/keto-granola/server/internal/server"
 	"github.com/keto-granola/server/internal/testhelpers"
 )
@@ -18,7 +18,7 @@ import (
 func TestCreateProduct_HappyPath(t *testing.T) {
 	t.Run("returns new product successfully", func(t *testing.T) {
 		mockRepo := mocks.RepositoryMock{
-			InsertProductFunc: func(ctx context.Context, params *product.CreateProductParams) (*product.Product, error) {
+			InsertProductFunc: func(ctx context.Context, params *admin.CreateProductParams) (*product.Product, error) {
 				if diff := cmp.Diff(expCreateProdParams, params); diff != "" {
 					t.Errorf("repo received wrong params (-want +got):\n%s", diff)
 				}
