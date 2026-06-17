@@ -9,8 +9,8 @@ services:
     environment:
       DB_URL: postgres://ci:ci@postgres:5432/keto-granola-ci?sslmode=disable
       SERVER_PORT: 3001
-      LOG_LEVEL: info
-      ENVIRONMENT: development
+      LOG_LEVEL: error
+      ENVIRONMENT: ci
       CLIENT_URL: http://localhost:5173
     depends_on:
       postgres:
