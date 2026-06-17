@@ -10,7 +10,7 @@ import (
 	"github.com/keto-granola/server/internal/apperr"
 	"github.com/keto-granola/server/internal/product"
 	"github.com/keto-granola/server/internal/product/admin"
-	"github.com/keto-granola/server/internal/product/mocks"
+	"github.com/keto-granola/server/internal/product/admin/mocks"
 )
 
 const (
@@ -21,7 +21,7 @@ const (
 	subIngredient4 = "sub4"
 )
 
-var createProdReqBody = &product.CreateProductParams{
+var createProdReqBody = &admin.CreateProductParams{
 	Name:        "Test Granola  ",
 	Description: "   Test Description",
 	Ingredients: []product.Ingredient{
@@ -53,7 +53,7 @@ var createProdReqBody = &product.CreateProductParams{
 	ImageAlt:        "test alt  ",
 }
 
-var expCreateProdParams = &product.CreateProductParams{
+var expCreateProdParams = &admin.CreateProductParams{
 	Name:        "Test Granola",
 	Description: "Test Description",
 	Ingredients: []product.Ingredient{
@@ -133,7 +133,7 @@ var expCreateProdRes = admin.CreateProductResponse{
 
 type testCase struct {
 	name           string
-	reqBody        product.CreateProductParams
+	reqBody        admin.CreateProductParams
 	arrange        func() *admin.Handler
 	wantHTTPStatus int
 	expectedErrMsg string
@@ -141,7 +141,7 @@ type testCase struct {
 
 var arrangeValidationCases = func() *admin.Handler {
 	mockRepo := &mocks.RepositoryMock{
-		InsertProductFunc: func(ctx context.Context, params *product.CreateProductParams) (*product.Product, error) {
+		InsertProductFunc: func(ctx context.Context, params *admin.CreateProductParams) (*product.Product, error) {
 			return insertedProd, nil
 		},
 	}
@@ -153,7 +153,7 @@ var arrangeValidationCases = func() *admin.Handler {
 var createProdUnhappyPathTestCases = []testCase{
 	{
 		name: "validation - missing ingredient percentage",
-		reqBody: product.CreateProductParams{
+		reqBody: admin.CreateProductParams{
 			Name:        createProdReqBody.Name,
 			Description: createProdReqBody.Description,
 			Ingredients: []product.Ingredient{
@@ -175,7 +175,7 @@ var createProdUnhappyPathTestCases = []testCase{
 	},
 	{
 		name: "validation - missing ingredients",
-		reqBody: product.CreateProductParams{
+		reqBody: admin.CreateProductParams{
 			Name:            createProdReqBody.Name,
 			Description:     createProdReqBody.Description,
 			Ingredients:     []product.Ingredient{},
@@ -194,7 +194,7 @@ var createProdUnhappyPathTestCases = []testCase{
 	},
 	{
 		name: "validation - invalid currency",
-		reqBody: product.CreateProductParams{
+		reqBody: admin.CreateProductParams{
 			Name:            createProdReqBody.Name,
 			Description:     createProdReqBody.Description,
 			Ingredients:     createProdReqBody.Ingredients,
@@ -216,7 +216,7 @@ var createProdUnhappyPathTestCases = []testCase{
 		reqBody: *createProdReqBody,
 		arrange: func() *admin.Handler {
 			mockRepo := &mocks.RepositoryMock{
-				InsertProductFunc: func(ctx context.Context, params *product.CreateProductParams) (*product.Product, error) {
+				InsertProductFunc: func(ctx context.Context, params *admin.CreateProductParams) (*product.Product, error) {
 					return nil, errors.New("db internal server error")
 				},
 			}

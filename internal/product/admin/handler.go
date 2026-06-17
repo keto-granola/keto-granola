@@ -9,10 +9,10 @@ import (
 )
 
 type Handler struct {
-	service *ProductService
+	service *Service
 }
 
-func NewHandler(svc *ProductService) *Handler {
+func NewHandler(svc *Service) *Handler {
 	return &Handler{service: svc}
 }
 
@@ -31,7 +31,7 @@ type CreateProductResponse struct {
 	ImageAlt    string               `json:"image_alt"`
 }
 
-func (h *Handler) CreateProduct(ctx context.Context, params *product.CreateProductParams) (*CreateProductResponse, error) {
+func (h *Handler) CreateProduct(ctx context.Context, params *CreateProductParams) (*CreateProductResponse, error) {
 	prod, err := h.service.CreateProduct(ctx, params)
 	if err != nil {
 		return nil, err

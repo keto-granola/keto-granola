@@ -23,9 +23,6 @@ var _ product.Repository = &RepositoryMock{}
 //			GetProductFunc: func(ctx context.Context, ID pgtype.UUID) (*product.Product, error) {
 //				panic("mock out the GetProduct method")
 //			},
-//			InsertProductFunc: func(ctx context.Context, params *product.CreateProductParams) (*product.Product, error) {
-//				panic("mock out the InsertProduct method")
-//			},
 //		}
 //
 //		// use mockedRepository in code that requires product.Repository
@@ -36,9 +33,6 @@ type RepositoryMock struct {
 	// GetProductFunc mocks the GetProduct method.
 	GetProductFunc func(ctx context.Context, ID pgtype.UUID) (*product.Product, error)
 
-	// InsertProductFunc mocks the InsertProduct method.
-	InsertProductFunc func(ctx context.Context, params *product.CreateProductParams) (*product.Product, error)
-
 	// calls tracks calls to the methods.
 	calls struct {
 		// GetProduct holds details about calls to the GetProduct method.
@@ -48,16 +42,8 @@ type RepositoryMock struct {
 			// ID is the ID argument value.
 			ID pgtype.UUID
 		}
-		// InsertProduct holds details about calls to the InsertProduct method.
-		InsertProduct []struct {
-			// Ctx is the ctx argument value.
-			Ctx context.Context
-			// Params is the params argument value.
-			Params *product.CreateProductParams
-		}
 	}
-	lockGetProduct    sync.RWMutex
-	lockInsertProduct sync.RWMutex
+	lockGetProduct sync.RWMutex
 }
 
 // GetProduct calls GetProductFunc.
@@ -93,41 +79,5 @@ func (mock *RepositoryMock) GetProductCalls() []struct {
 	mock.lockGetProduct.RLock()
 	calls = mock.calls.GetProduct
 	mock.lockGetProduct.RUnlock()
-	return calls
-}
-
-// InsertProduct calls InsertProductFunc.
-func (mock *RepositoryMock) InsertProduct(ctx context.Context, params *product.CreateProductParams) (*product.Product, error) {
-	if mock.InsertProductFunc == nil {
-		panic("RepositoryMock.InsertProductFunc: method is nil but Repository.InsertProduct was just called")
-	}
-	callInfo := struct {
-		Ctx    context.Context
-		Params *product.CreateProductParams
-	}{
-		Ctx:    ctx,
-		Params: params,
-	}
-	mock.lockInsertProduct.Lock()
-	mock.calls.InsertProduct = append(mock.calls.InsertProduct, callInfo)
-	mock.lockInsertProduct.Unlock()
-	return mock.InsertProductFunc(ctx, params)
-}
-
-// InsertProductCalls gets all the calls that were made to InsertProduct.
-// Check the length with:
-//
-//	len(mockedRepository.InsertProductCalls())
-func (mock *RepositoryMock) InsertProductCalls() []struct {
-	Ctx    context.Context
-	Params *product.CreateProductParams
-} {
-	var calls []struct {
-		Ctx    context.Context
-		Params *product.CreateProductParams
-	}
-	mock.lockInsertProduct.RLock()
-	calls = mock.calls.InsertProduct
-	mock.lockInsertProduct.RUnlock()
 	return calls
 }

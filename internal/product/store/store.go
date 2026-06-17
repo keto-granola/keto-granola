@@ -8,6 +8,7 @@ import (
 
 	"github.com/keto-granola/server/internal/apperr"
 	"github.com/keto-granola/server/internal/product"
+	"github.com/keto-granola/server/internal/product/admin"
 	"github.com/keto-granola/server/internal/store"
 	"github.com/keto-granola/server/internal/store/db/generated"
 	"github.com/keto-granola/server/internal/store/db/utils"
@@ -21,7 +22,7 @@ func New(queries *generated.Queries) *Store {
 	return &Store{queries: queries}
 }
 
-func (s *Store) InsertProduct(ctx context.Context, params *product.CreateProductParams) (*product.Product, error) {
+func (s *Store) InsertProduct(ctx context.Context, params *admin.CreateProductParams) (*product.Product, error) {
 	insertParams, err := toInsertProductParams(params)
 	if err != nil {
 		return nil, err
@@ -38,7 +39,7 @@ func (s *Store) InsertProduct(ctx context.Context, params *product.CreateProduct
 	return insertedProductFrom(&row)
 }
 
-func toInsertProductParams(params *product.CreateProductParams) (*generated.InsertProductParams, error) {
+func toInsertProductParams(params *admin.CreateProductParams) (*generated.InsertProductParams, error) {
 	ingredients, err := json.Marshal(params.Ingredients)
 	if err != nil {
 		return nil, apperr.Internal("Store.InsertProduct", err)

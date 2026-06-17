@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"embed"
+	"fmt"
 	"html/template"
 	"log/slog"
 	"net/http"
@@ -32,9 +33,15 @@ const (
 	serverBurstLimit = 120
 )
 
+type Deps struct {
+	Environment config.Environment
+	ClientURL   string
+	Handlers    *Handlers
+	DataStore   *store.Store
+}
+
 type Server struct {
-	echo      *echo.Echo
-	templates *template.Template
+	echo *echo.Echo
 }
 
 type Handlers struct {
@@ -48,13 +55,13 @@ type Handlers struct {
 //go:embed templates
 var templateFS embed.FS
 
-func New(ctx context.Context, environment config.Environment, clientURL string, handlers *Handlers, dataStore *store.Store) *Server {
+func New(ctx context.Context, deps *Deps) *Server {
 	e := echo.New()
 	NewValidator(e)
 	e.HideBanner = true // prevents startup banner from being logged
 
 	e.Use(echoMiddleware.CORSWithConfig(echoMiddleware.CORSConfig{
-		AllowOrigins: []string{clientURL},
+		AllowOrigins: []string{deps.ClientURL},
 	}))
 
 	e.Use(middleware.Log)
@@ -68,17 +75,13 @@ func New(ctx context.Context, environment config.Environment, clientURL string, 
 		},
 	)))
 
-	var templates = template.Must(
-		template.New("").Funcs(templatehelpers.FuncMap()).ParseFS(templateFS, "templates/**/*.html"),
-	)
-
 	web := e.Group("/")
 	api := e.Group(config.APIBasePath)
 
 	apiPublic := api.Group("")
 	apiPrivate := api.Group("")
 
-	if environment == config.EnvironmentTest {
+	if deps.Environment == config.EnvironmentTest {
 		// TODO: run test middleware
 		slog.Info("run test middleware")
 	} else {
@@ -86,15 +89,14 @@ func New(ctx context.Context, environment config.Environment, clientURL string, 
 		slog.Info("run auth middleware")
 	}
 
-	registerRoutes(apiPublic, apiPrivate, web, handlers, dataStore)
+	registerRoutes(apiPublic, apiPrivate, web, deps.Handlers, deps.DataStore)
 
 	e.Server.ReadTimeout = readTimeout
 	e.Server.WriteTimeout = writeTimeout
 	e.Server.IdleTimeout = idleTimeout
 
 	return &Server{
-		echo:      e,
-		templates: templates,
+		echo: e,
 	}
 }
 
@@ -105,6 +107,15 @@ func (s *Server) Start(port string) error {
 	}
 
 	return nil
+}
+
+func NewTemplates() (*template.Template, error) {
+	tmpl, err := template.New("").Funcs(templatehelpers.FuncMap()).ParseFS(templateFS, "templates/**/*.html")
+	if err != nil {
+		return nil, fmt.Errorf("parse templates: %w", err)
+	}
+
+	return tmpl, nil
 }
 
 func (s *Server) Stop() error {

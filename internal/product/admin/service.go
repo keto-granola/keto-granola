@@ -9,16 +9,16 @@ import (
 	"github.com/keto-granola/server/internal/product"
 )
 
-type ProductService struct {
-	store product.Repository
+type Service struct {
+	store Repository
 }
 
-func NewService(store product.Repository) *ProductService {
-	return &ProductService{store: store}
+func NewService(store Repository) *Service {
+	return &Service{store: store}
 }
 
-func (s *ProductService) CreateProduct(ctx context.Context, params *product.CreateProductParams) (*CreateProductResponse, error) {
-	createProdParams := &product.CreateProductParams{
+func (s *Service) CreateProduct(ctx context.Context, params *CreateProductParams) (*CreateProductResponse, error) {
+	createProdParams := &CreateProductParams{
 		Name:            strings.TrimSpace(params.Name),
 		Description:     strings.TrimSpace(params.Description),
 		Ingredients:     normaliseIngredients(params.Ingredients),
