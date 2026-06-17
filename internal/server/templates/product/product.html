@@ -2,7 +2,7 @@
 <html>
 <head>
   {{if eq .Environment "development"}}
-  <script type="module" src="{{.ClientURL}}/src/main.tsx"></script>
+  <script type="module" src="{{.ClientURL}}/src/islands.tsx"></script>
   {{else}}
   <script type="module" src="/assets/islands.js"></script>
   {{end}}
@@ -12,7 +12,7 @@
     <h1>{{.Product.Name}}</h1>
     <p>{{.Product.Description}}</p>
     <img src="{{.Product.ImageURL}}" alt="{{.Product.ImageAlt}}">
-    <p class="price">{{.Product.Currency}}{{centsToPrice .Product.Price}}</p>
+    <p class="price">{{.Product.Currency}}{{centsToPrice .Product.PriceCents}}</p>
      <div 
         id="add-to-cart"
         data-product-id="{{.Product.ID}}"
