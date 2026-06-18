@@ -1,4 +1,4 @@
-name: Frontend CI - lint, build
+name: Frontend
 
 on:
   pull_request:
@@ -8,6 +8,10 @@ on:
 
 jobs:
   lint:
+    defaults:
+      run:
+        working-directory: frontend
+        
     runs-on: ubuntu-latest
 
     steps:
@@ -23,7 +27,7 @@ jobs:
     defaults:
       run:
         working-directory: frontend
-    name: Build
+
     runs-on: ubuntu-latest
 
     steps:

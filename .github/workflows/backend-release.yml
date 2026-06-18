@@ -5,6 +5,10 @@ on:
 
 jobs:
   release:
+    defaults:
+      run:
+        working-directory: backend
+
     runs-on: ubuntu-latest
 
     steps:
