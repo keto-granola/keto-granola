@@ -10,6 +10,6 @@ runs:
     - name: Setup Go
       uses: actions/setup-go@v6
       with:
-          go-version-file: 'backend/go.mod'
-          cache: true
+        go-version-file: 'backend/go.mod'
+        cache: true
   
