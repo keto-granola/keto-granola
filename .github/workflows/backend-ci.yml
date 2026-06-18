@@ -15,7 +15,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
       - uses: ./.github/actions/setup-go
+
       - uses: golangci/golangci-lint-action@v8
         with:
           version: v2.12.2
@@ -30,6 +34,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
       - uses: ./.github/actions/setup-go
       - run: make test
 
@@ -41,12 +48,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
       - uses: docker/setup-buildx-action@v3
+
       - uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-buildx-
+            
       - run: make docker/ci-build
