@@ -1,57 +1,14 @@
-# Keto Granola server 
-Go server for keto granola e-commerce platform using Echo for HTTP routing, PostgreSQL for data persistence, and sqlc for type-safe database queries. Handles SSR for product pages with html/template.
+# Keto Granola
+
+Monorepo for Keto Granola e-commerce platform.
 
 ## App architecture
 ![high-level system architecture](apparchitecture.png)
 
-## Development
+Cloudflare acts as a full proxy caching static assets and SSR HTML, forwarding cache misses to the backend server. The server renders all routes via `html/template`, with React islands hydrating interactive components 
+(add-to-cart, etc.) client-side. 
 
-### Prerequisite files:
-- .env
+## Structure
 
-### Setup:
-```
-make dep
-```
-
-### Run with docker:
-```
-docker compose up -d
-```
-
-### Run without docker:
-```
-docker compose up -d postgres # run only postgres via docker
-make run
-```
-
-### Lint:
-```
-make lint
-```
-
-### Tests:
-```
-make test
-```
-
-- Running unit tests only:
-`make test/unit`
-
-- Running e2e tests only:
-`make test/e2e`
-
-### Generate db queries:
-```
-make sqlc
-```
-
-### Create a db migration:
-```
-make migrate/create name=<migration_name>
-```
-
-### Generate mocks:
-```
-make mocks
-```
+- `/frontend` — Vite + React islands. See [frontend/README.md](./frontend/README.md)
+- `/backend` — Go + Echo. See [backend/README.md](./backend/README.md)
