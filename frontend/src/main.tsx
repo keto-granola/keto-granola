@@ -1,4 +1,4 @@
-import { ProductOverview } from './islands/ProductOverview'
+import { ProductOverview } from './islands/AddToCart'
 import { mountIsland } from './mount'
 
 function mountIfPresent<P extends object>(

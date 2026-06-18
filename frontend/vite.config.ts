@@ -7,8 +7,7 @@ export default defineConfig({
     manifest: true,
     rollupOptions: {
       input: {
-        islands: 'src/islands.tsx', // islands bundle
-        app: 'src/app.tsx', // SPA bundle
+        main: 'src/main.tsx',
       },
     },
   },

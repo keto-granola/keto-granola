@@ -2,11 +2,11 @@ import { useState } from 'react'
 
 import { mountIsland } from '../mount'
 
-interface ProductOverviewProps {
+interface AddToCartProps {
   productId: string
 }
 
-export function ProductOverview({ productId }: ProductOverviewProps) {
+export function AddToCart({ productId }: AddToCartProps) {
   const [quantity, setQuantity] = useState<number>(1)
 
   const addToCart = (productId: string, quantity: number) => {
@@ -24,7 +24,7 @@ export function ProductOverview({ productId }: ProductOverviewProps) {
   )
 }
 
-const el = document.getElementById('product-overview')
+const el = document.getElementById('add-to-cart')
 if (el) {
   const productId = el.dataset.productId
   if (!productId) {
@@ -33,7 +33,7 @@ if (el) {
 
   mountIsland({
     el,
-    Component: ProductOverview,
+    Component: AddToCart,
     props: { productId },
   })
 }
