@@ -1,3 +1,5 @@
+name: Frontend CI - lint, build
+
 on:
   pull_request:
     branches: [main]
@@ -6,7 +8,6 @@ on:
 
 jobs:
   lint:
-    name: Lint
     runs-on: ubuntu-latest
 
     steps:

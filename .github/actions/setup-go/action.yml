@@ -1,3 +1,6 @@
+name: setup-go
+description: Setup Go
+
 runs:
   using: composite
   steps:
