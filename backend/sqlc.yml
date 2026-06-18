@@ -1,0 +1,16 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    schema: "internal/store/db/schema.sql"
+    queries:
+      - "internal/product/store/query/"
+    gen:
+      go:
+        package: "generated"
+        out: "internal/store/db/generated"
+        sql_package: "pgx/v5"
+        overrides:
+          - db_type: "jsonb"
+            go_type: "encoding/json.RawMessage"
+          - db_type: "json"
+            go_type: "encoding/json.RawMessage"

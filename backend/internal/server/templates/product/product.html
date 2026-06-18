@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  {{if eq .Environment "development"}}
+  <script type="module" src="{{.ClientURL}}/src/islands.tsx"></script>
+  {{else}}
+  <script type="module" src="/assets/islands.js"></script>
+  {{end}}
+</head>
+<body>
+  <div class="product-hero">
+    <h1>{{.Product.Name}}</h1>
+    <p>{{.Product.Description}}</p>
+    <img src="{{.Product.ImageURL}}" alt="{{.Product.ImageAlt}}">
+    <p class="price">{{.Product.Currency}}{{centsToPrice .Product.PriceCents}}</p>
+     <div 
+        id="product-overview"
+        data-product-id="{{.Product.ID}}"
+      ></div>
+  </div>
+  <div class="product-nutrition">
+    <div class="product-ingredients">
+        {{ingredientList .Product.Ingredients}}
+    </div>
+    <div class="product-allergens">
+    </div>
+    <div class="product-nutrition-info">
+      <p>{{.Product.Nutrition}}</p>
+    </div>
+    <ul class="product-dietary">
+      {{range .Product.DietaryTags}}
+      <li>{{.}}</li>
+      {{end}}
+    </ul>
+  </div>
+</body>
+</html>
