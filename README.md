@@ -6,7 +6,7 @@ Monorepo for Keto Granola e-commerce platform.
 ![high-level system architecture](apparchitecture.png)
 
 Cloudflare acts as a full proxy caching static assets and SSR HTML, forwarding cache misses to the backend server. The server renders all routes via `html/template`, with React islands hydrating interactive components 
-(add-to-cart, etc.) client-side. 
+client-side. 
 
 ## Structure
 
