@@ -2,9 +2,9 @@
 <html>
 <head>
   {{if eq .Environment "development"}}
-  <script type="module" src="{{.ClientURL}}/src/islands.tsx"></script>
+  <script type="module" src="{{.ClientURL}}/src/main.tsx"></script>
   {{else}}
-  <script type="module" src="/assets/islands.js"></script>
+  <script type="module" src="/assets/main.js"></script>
   {{end}}
 </head>
 <body>
