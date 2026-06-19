@@ -1,3 +1,21 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+*.tsbuildinfo
+
+# local env files
 .env
-.idea
+
+# IDE/editor
+.idea/
+
+# OS files
+.DS_Store
+
+# binaries
 bin
+
+# miscellaneous
+apparchitecture.excalidraw

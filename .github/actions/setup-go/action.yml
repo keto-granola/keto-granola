@@ -1,0 +1,12 @@
+name: setup-go
+description: Setup Go
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Go
+      uses: actions/setup-go@v6
+      with:
+        go-version-file: 'backend/go.mod'
+        cache: true
+  

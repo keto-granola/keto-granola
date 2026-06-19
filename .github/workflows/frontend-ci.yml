@@ -1,0 +1,49 @@
+name: Frontend
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - frontend/**
+
+jobs:
+  lint:
+    defaults:
+      run:
+        working-directory: frontend
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - uses: ./.github/actions/setup-node
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: TypeScript type check
+        run: npm run typecheck
+
+  build:
+    defaults:
+      run:
+        working-directory: frontend
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - uses: ./.github/actions/setup-node
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: dist
+          path: frontend/dist/
