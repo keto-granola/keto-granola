@@ -12,6 +12,6 @@ function mountIfPresent<P extends object>(
   }
 }
 
-mountIfPresent('product-overview', AddToCart, el => ({
+mountIfPresent('add-to-cart', AddToCart, el => ({
   productId: el.dataset.productId!,
 }))
