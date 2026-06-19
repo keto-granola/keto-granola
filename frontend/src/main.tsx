@@ -1,4 +1,4 @@
-import { ProductOverview } from './islands/AddToCart'
+import { AddToCart } from './islands/AddToCart'
 import { mountIsland } from './mount'
 
 function mountIfPresent<P extends object>(
@@ -12,6 +12,6 @@ function mountIfPresent<P extends object>(
   }
 }
 
-mountIfPresent('product-overview', ProductOverview, el => ({
+mountIfPresent('product-overview', AddToCart, el => ({
   productId: el.dataset.productId!,
 }))
