@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <script type="module" src="{{ .Asset }}"></script>
-  {{ range .AssetCSS }}
+  <script type="module" src="{{ asset }}"></script>
+  {{ range assetCSS }}
     <link rel="stylesheet" href="{{ . }}">
   {{ end }}
 </head>
