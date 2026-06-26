@@ -2,20 +2,30 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/labstack/echo/v4"
 
 	"github.com/keto-granola/server/internal/store"
+	"github.com/keto-granola/server/internal/webassets"
 )
 
 const pingTimeout = 5 * time.Second
 
-func registerRoutes(apiPublic, apiPrivate, web *echo.Group, handlers *Handlers, dataStore *store.Store) {
+func registerRoutes(apiPublic, apiPrivate, web *echo.Group, handlers *Handlers, dataStore *store.Store) error {
 	registerHealthEndpoint(apiPublic, dataStore)
+
+	if err := registerAssetRoutes(web); err != nil {
+		return err
+	}
+
 	registerAPIRoutes(apiPrivate, handlers)
+
 	registerWebRoutes(web, handlers)
+
+	return nil
 }
 
 func registerHealthEndpoint(api *echo.Group, dataStore *store.Store) {
@@ -37,6 +47,17 @@ func registerHealthEndpoint(api *echo.Group, dataStore *store.Store) {
 			"db":     dbStatus,
 		})
 	})
+}
+
+func registerAssetRoutes(web *echo.Group) error {
+	handler, err := webassets.AssetsHandler()
+	if err != nil {
+		return fmt.Errorf("set up assets handler: %w", err)
+	}
+
+	web.GET("/assets/*", echo.WrapHandler(http.StripPrefix("/assets/", handler)))
+
+	return nil
 }
 
 func registerAPIRoutes(apiPrivate *echo.Group, handlers *Handlers) {

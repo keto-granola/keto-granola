@@ -9,6 +9,9 @@ export default defineConfig({
       input: {
         main: 'src/main.tsx',
       },
+      output: {
+        dir: '../backend/internal/webassets/dist',
+      },
     },
   },
 })

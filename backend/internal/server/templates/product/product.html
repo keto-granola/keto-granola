@@ -1,36 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-  {{if eq .Environment "development"}}
-  <script type="module" src="{{.ClientURL}}/src/main.tsx"></script>
-  {{else}}
-  <script type="module" src="/assets/main.js"></script>
-  {{end}}
+  <script type="module" src="{{ .Asset }}"></script>
+  {{ range .AssetCSS }}
+    <link rel="stylesheet" href="{{ . }}">
+  {{ end }}
 </head>
 <body>
   <div class="product-hero">
-    <h1>{{.Product.Name}}</h1>
-    <p>{{.Product.Description}}</p>
-    <img src="{{.Product.ImageURL}}" alt="{{.Product.ImageAlt}}">
-    <p class="price">{{.Product.Currency}}{{centsToPrice .Product.PriceCents}}</p>
+    <h1>{{ .Name }}</h1>
+    <p>{{.Description }}</p>
+    <img src="{{ .ImageURL }}" alt="{{ .ImageAlt }}">
+    <p class="price">{{ .Currency }}{{ centsToPrice .PriceCents }}</p>
      <div 
         id="add-to-cart"
-        data-product-id="{{.Product.ID}}"
+        data-product-id="{{ .ID }}"
       ></div>
   </div>
   <div class="product-nutrition">
     <div class="product-ingredients">
-        {{ingredientList .Product.Ingredients}}
+        {{ ingredientList .Ingredients }}
     </div>
     <div class="product-allergens">
     </div>
     <div class="product-nutrition-info">
-      <p>{{.Product.Nutrition}}</p>
+      <p>{{ .Nutrition }}</p>
     </div>
     <ul class="product-dietary">
-      {{range .Product.DietaryTags}}
-      <li>{{.}}</li>
-      {{end}}
+      {{ range .DietaryTags }}
+      <li>{{ . }}</li>
+      {{ end }}
     </ul>
   </div>
 </body>

@@ -16,6 +16,7 @@ import (
 	"github.com/keto-granola/server/internal/product/web"
 	"github.com/keto-granola/server/internal/server"
 	"github.com/keto-granola/server/internal/store"
+	"github.com/keto-granola/server/internal/webassets"
 )
 
 func main() {
@@ -45,32 +46,40 @@ func run() error {
 	}
 	defer dataStore.Close()
 
-	templates, err := server.NewTemplates()
+	assetsLoader, err := webassets.New(config.IslandEntry)
+	if err != nil {
+		return fmt.Errorf("init asset loader: %w", err)
+	}
+
+	templates, err := server.NewTemplates(assetsLoader)
 	if err != nil {
 		return fmt.Errorf("create templates: %w", err)
 	}
 
-	handlers := composeHandlers(dataStore, templates, cfg.Environment, cfg.ClientURL)
+	handlers := composeHandlers(dataStore, templates, cfg.Environment)
 
-	serverDeps := &server.Deps{
+	serverDeps := &server.Dependencies{
 		Environment: cfg.Environment,
 		ClientURL:   cfg.ClientURL,
 		Handlers:    handlers,
 		DataStore:   dataStore,
 	}
 
-	echo := server.New(ctx, serverDeps)
+	echo, err := server.New(ctx, serverDeps)
+	if err != nil {
+		return err
+	}
 
-	serverErr := make(chan error, 1)
+	serverStartErr := make(chan error, 1)
 
 	go func() {
-		serverErr <- echo.Start(cfg.Port)
+		serverStartErr <- echo.Start(cfg.Port)
 	}()
 
 	select {
 	case <-ctx.Done():
 		slog.Info("context cancelled")
-	case err = <-serverErr:
+	case err = <-serverStartErr:
 	}
 
 	if shutdownErr := echo.Stop(); shutdownErr != nil {
@@ -80,13 +89,13 @@ func run() error {
 	return err
 }
 
-func composeHandlers(db *store.Store, tmpl *template.Template, env config.Environment, clientURL string) *server.Handlers {
+func composeHandlers(db *store.Store, tmpl *template.Template, env config.Environment) *server.Handlers {
 	productStore := productstore.New(db.Queries)
 	prodService := product.NewService(productStore)
 	prodAdminService := productadmin.NewService(productStore)
 
 	return &server.Handlers{
 		ProductAdmin: productadmin.NewHandler(prodAdminService),
-		Product:      web.NewHandler(prodService, tmpl, env, clientURL),
+		Product:      web.NewHandler(prodService, tmpl),
 	}
 }
