@@ -22,7 +22,7 @@ func RunMigrations(dbURL string) error {
 	}
 
 	db := stdlib.OpenDB(*cfg)
-	defer db.Close() //nolint:errcheck
+	defer db.Close()
 
 	dbDriver, err := pgxv5.WithInstance(db, &pgxv5.Config{})
 	if err != nil {

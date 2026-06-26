@@ -1,6 +1,18 @@
 version: "2"
 
 linters:
+  exclusions:
+    generated: strict
+    presets:
+      - comments
+      - std-error-handling
+      - common-false-positives
+      - legacy
+    rules:
+      - path: '\.sql\.go$'
+        linters: [errcheck, gocritic, lll, unparam, unused, gocyclo, funlen, mnd, goconst]
+      - path: '/mocks/mock\.go$'
+        linters: [errcheck, gocritic, lll, unparam, unused, revive]
   enable:
     - bodyclose
     - dogsled
@@ -49,6 +61,10 @@ formatters:
   enable:
     - gofmt
     - gci
+  exclusions:
+    paths:
+      - '\.sql\.go$'
+      - '/mocks/mock\.go$'
   settings:
     gci:
       sections:

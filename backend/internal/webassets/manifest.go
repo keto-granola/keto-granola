@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io/fs"
 	"net/http"
-	"os"
 )
 
 //go:embed dist/.vite/manifest.json
@@ -28,7 +27,7 @@ type Loader struct {
 }
 
 func New(islandEntry string) (*Loader, error) {
-	data, err := os.ReadFile("dist/.vite/manifest.json")
+	data, err := manifestFS.ReadFile("dist/.vite/manifest.json")
 	if err != nil {
 		return nil, fmt.Errorf("read vite manifest: %w", err)
 	}
