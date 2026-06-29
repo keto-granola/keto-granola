@@ -7,13 +7,9 @@ jobs:
     runs-on: ubuntu-latest
 
     defaults:
-      run:
-        working-directory: backend
 
     steps:
       - uses: actions/checkout@v6
-
-      - uses: ./.github/actions/build-frontend
 
       - name: Build and start
         run: docker compose -f docker-compose.ci.yml up -d --build

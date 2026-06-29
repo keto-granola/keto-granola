@@ -9,7 +9,7 @@ React client for keto granola e-commerce platform using:
 - shadcn/ui (UI framework)
 - Zod (validation)
 
-## Development
+## Local Development
 
 ### Prerequisite files:
 - .env
