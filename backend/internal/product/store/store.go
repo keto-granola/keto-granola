@@ -3,7 +3,9 @@ package store
 import (
 	"context"
 	"encoding/json"
+	"errors"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 
 	"github.com/keto-granola/server/internal/apperr"
@@ -92,6 +94,22 @@ func insertedProductFrom(row *generated.InsertProductRow) (*product.Product, err
 	}, nil
 }
 
+func (s *Store) GetProduct(ctx context.Context, id pgtype.UUID) (*product.Product, error) {
+	row, err := store.ExecQuery(ctx, func() (generated.GetProductRow, error) {
+		return s.queries.GetProduct(ctx, id)
+	})
+
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, apperr.NotFound("Store.GetProduct", "PRODUCT_NOT_FOUND", "product not found")
+		}
+
+		return nil, apperr.Internal("Store.GetProduct", err)
+	}
+
+	return fetchedProductFrom(&row)
+}
+
 func fetchedProductFrom(row *generated.GetProductRow) (*product.Product, error) {
 	var ingredients []product.Ingredient
 	if err := json.Unmarshal(row.Ingredients, &ingredients); err != nil {
@@ -116,16 +134,4 @@ func fetchedProductFrom(row *generated.GetProductRow) (*product.Product, error) 
 		ImageStorageKey: row.ImageStorageKey,
 		ImageAlt:        row.ImageAlt,
 	}, nil
-}
-
-func (s *Store) GetProduct(ctx context.Context, id pgtype.UUID) (*product.Product, error) {
-	row, err := store.ExecQuery(ctx, func() (generated.GetProductRow, error) {
-		return s.queries.GetProduct(ctx, id)
-	})
-
-	if err != nil {
-		return nil, apperr.Internal("Store.GetProduct", err)
-	}
-
-	return fetchedProductFrom(&row)
 }
