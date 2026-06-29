@@ -16,15 +16,30 @@ React client for keto granola e-commerce platform using:
 
 ### Setup:
 ```
-npm i
+make dep
 ```
 
 ### Run:
 ```
-npm run dev
+make run
 ```
 
 ### Lint:
 ```
-npm run lint
+make lint
+```
+
+- Fix lint errors:
+```
+make lint/fix
+```
+
+- Check Typescript errors:
+```
+make typecheck
+```
+
+### Build:
+```
+make build
 ```

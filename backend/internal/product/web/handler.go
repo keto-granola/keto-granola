@@ -7,25 +7,16 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"github.com/keto-granola/server/internal/apperr"
-	"github.com/keto-granola/server/internal/config"
 	"github.com/keto-granola/server/internal/product"
 )
 
 type Handler struct {
-	service     *product.Service
-	templates   *template.Template
-	environment config.Environment
-	clientURL   string
+	service   *product.Service
+	templates *template.Template
 }
 
-type ProductPageData struct {
-	Product     *product.GetProductResponse
-	Environment config.Environment
-	ClientURL   string
-}
-
-func NewHandler(svc *product.Service, tmpl *template.Template, env config.Environment, clientURL string) *Handler {
-	return &Handler{service: svc, templates: tmpl, environment: env, clientURL: clientURL}
+func NewHandler(svc *product.Service, tmpl *template.Template) *Handler {
+	return &Handler{service: svc, templates: tmpl}
 }
 
 func (h *Handler) GetProductPage(e echo.Context) error {
@@ -39,11 +30,5 @@ func (h *Handler) GetProductPage(e echo.Context) error {
 		return apperr.ToHTTPError(err)
 	}
 
-	productPageData := &ProductPageData{
-		Product:     prod,
-		Environment: h.environment,
-		ClientURL:   h.clientURL,
-	}
-
-	return h.templates.ExecuteTemplate(e.Response(), "product.html", productPageData)
+	return h.templates.ExecuteTemplate(e.Response(), "product.html", prod)
 }

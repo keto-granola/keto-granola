@@ -18,6 +18,7 @@ import (
 	productweb "github.com/keto-granola/server/internal/product/web"
 	"github.com/keto-granola/server/internal/server/templates/templatehelpers"
 	"github.com/keto-granola/server/internal/store"
+	"github.com/keto-granola/server/internal/webassets"
 )
 
 const (
@@ -33,7 +34,7 @@ const (
 	serverBurstLimit = 120
 )
 
-type Deps struct {
+type Dependencies struct {
 	Environment config.Environment
 	ClientURL   string
 	Handlers    *Handlers
@@ -55,7 +56,7 @@ type Handlers struct {
 //go:embed templates
 var templateFS embed.FS
 
-func New(ctx context.Context, deps *Deps) *Server {
+func New(ctx context.Context, deps *Dependencies) (*Server, error) {
 	e := echo.New()
 	NewValidator(e)
 	e.HideBanner = true // prevents startup banner from being logged
@@ -75,7 +76,7 @@ func New(ctx context.Context, deps *Deps) *Server {
 		},
 	)))
 
-	web := e.Group("/")
+	web := e.Group("")
 	api := e.Group(config.APIBasePath)
 
 	apiPublic := api.Group("")
@@ -89,7 +90,9 @@ func New(ctx context.Context, deps *Deps) *Server {
 		slog.Info("run auth middleware")
 	}
 
-	registerRoutes(apiPublic, apiPrivate, web, deps.Handlers, deps.DataStore)
+	if err := registerRoutes(apiPublic, apiPrivate, web, deps.Handlers, deps.DataStore); err != nil {
+		return nil, err
+	}
 
 	e.Server.ReadTimeout = readTimeout
 	e.Server.WriteTimeout = writeTimeout
@@ -97,7 +100,7 @@ func New(ctx context.Context, deps *Deps) *Server {
 
 	return &Server{
 		echo: e,
-	}
+	}, nil
 }
 
 func (s *Server) Start(port string) error {
@@ -109,8 +112,8 @@ func (s *Server) Start(port string) error {
 	return nil
 }
 
-func NewTemplates() (*template.Template, error) {
-	tmpl, err := template.New("").Funcs(templatehelpers.FuncMap()).ParseFS(templateFS, "templates/**/*.html")
+func NewTemplates(assetsLoader *webassets.Loader) (*template.Template, error) {
+	tmpl, err := template.New("").Funcs(templatehelpers.FuncMap(assetsLoader)).ParseFS(templateFS, "templates/**/*.html")
 	if err != nil {
 		return nil, fmt.Errorf("parse templates: %w", err)
 	}

@@ -1,6 +1,8 @@
 import { AddToCart } from './islands/AddToCart'
 import { mountIsland } from './mount'
 
+import './index.css'
+
 function mountIfPresent<P extends object>(
   elementId: string,
   Component: React.ComponentType<P>,

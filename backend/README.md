@@ -32,6 +32,11 @@ make run
 make lint
 ```
 
+- Fix lint errors:
+```
+make lint/fix
+```
+
 ### Tests:
 ```
 make test
