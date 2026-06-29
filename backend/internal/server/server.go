@@ -76,7 +76,7 @@ func New(ctx context.Context, deps *Dependencies) (*Server, error) {
 		},
 	)))
 
-	web := e.Group("/")
+	web := e.Group("")
 	api := e.Group(config.APIBasePath)
 
 	apiPublic := api.Group("")

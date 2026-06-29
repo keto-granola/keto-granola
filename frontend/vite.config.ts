@@ -4,6 +4,7 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [react()],
   build: {
+    emptyOutDir: true,
     manifest: true,
     rollupOptions: {
       input: {
