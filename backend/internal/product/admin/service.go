@@ -6,7 +6,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/keto-granola/server/internal/product"
+	"github.com/keto-granola/keto-granola/internal/product"
 )
 
 type Service struct {

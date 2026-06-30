@@ -11,9 +11,9 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"github.com/keto-granola/server/internal/store/db"
-	"github.com/keto-granola/server/internal/store/db/generated"
-	"github.com/keto-granola/server/internal/utils"
+	"github.com/keto-granola/keto-granola/internal/store/db"
+	"github.com/keto-granola/keto-granola/internal/store/db/generated"
+	"github.com/keto-granola/keto-granola/internal/utils"
 )
 
 const (

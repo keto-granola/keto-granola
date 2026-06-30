@@ -6,17 +6,32 @@ import (
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 
-	"github.com/keto-granola/server/internal/apperr"
-	"github.com/keto-granola/server/internal/product"
+	"github.com/keto-granola/keto-granola/internal/apperr"
+	"github.com/keto-granola/keto-granola/internal/config"
+	"github.com/keto-granola/keto-granola/internal/product"
 )
 
 type Handler struct {
 	service   *product.Service
 	templates *template.Template
+	clientURL string
+	devEnv    bool
 }
 
-func NewHandler(svc *product.Service, tmpl *template.Template) *Handler {
-	return &Handler{service: svc, templates: tmpl}
+type ProductData struct {
+	Product   *product.GetProductResponse
+	ClientURL string
+	DevEnv    bool
+}
+
+func NewHandler(svc *product.Service, tmpl *template.Template, clientURL string, env config.Environment) *Handler {
+	isDevEnv := false
+
+	if env == config.EnvironmentDevelopment {
+		isDevEnv = true
+	}
+
+	return &Handler{service: svc, templates: tmpl, clientURL: clientURL, devEnv: isDevEnv}
 }
 
 func (h *Handler) GetProductPage(e echo.Context) error {
@@ -30,5 +45,11 @@ func (h *Handler) GetProductPage(e echo.Context) error {
 		return apperr.ToHTTPError(err)
 	}
 
-	return h.templates.ExecuteTemplate(e.Response(), "product.html", prod)
+	productData := &ProductData{
+		Product:   prod,
+		ClientURL: h.clientURL,
+		DevEnv:    h.devEnv,
+	}
+
+	return h.templates.ExecuteTemplate(e.Response(), "product.html", productData)
 }

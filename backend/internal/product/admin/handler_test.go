@@ -8,11 +8,11 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/keto-granola/server/internal/product"
-	"github.com/keto-granola/server/internal/product/admin"
-	"github.com/keto-granola/server/internal/product/admin/mocks"
-	"github.com/keto-granola/server/internal/server"
-	"github.com/keto-granola/server/internal/testhelpers"
+	"github.com/keto-granola/keto-granola/internal/product"
+	"github.com/keto-granola/keto-granola/internal/product/admin"
+	"github.com/keto-granola/keto-granola/internal/product/admin/mocks"
+	"github.com/keto-granola/keto-granola/internal/server"
+	"github.com/keto-granola/keto-granola/internal/testhelpers"
 )
 
 func TestCreateProduct_HappyPath(t *testing.T) {

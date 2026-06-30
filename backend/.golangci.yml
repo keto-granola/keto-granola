@@ -70,5 +70,5 @@ formatters:
       sections:
         - standard
         - default
-        - prefix(github.com/keto-granola/server)
+        - prefix(github.com/keto-granola/keto-granola)
 
