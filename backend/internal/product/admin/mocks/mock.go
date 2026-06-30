@@ -5,8 +5,8 @@ package mocks
 
 import (
 	"context"
-	"github.com/keto-granola/server/internal/product"
-	"github.com/keto-granola/server/internal/product/admin"
+	"github.com/keto-granola/keto-granola/internal/product"
+	"github.com/keto-granola/keto-granola/internal/product/admin"
 	"sync"
 )
 

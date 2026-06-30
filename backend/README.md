@@ -6,24 +6,19 @@ Keto granola server using:
 - PostgreSQL
 - sqlc (type-safe database queries)
 
-## Development
+## Local Development
 
-### Prerequisite files:
-- .env
+### Prerequisites:
+- `.env` file
+- postgres DB running via docker. See [root README.md](../README.md)
 
 ### Setup:
 ```
 make dep
 ```
 
-### Run with docker:
+### Run:
 ```
-docker compose up -d
-```
-
-### Run without docker:
-```
-docker compose up -d postgres # run only postgres via docker
 make run
 ```
 

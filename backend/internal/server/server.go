@@ -12,13 +12,13 @@ import (
 	"github.com/labstack/echo/v4"
 	echoMiddleware "github.com/labstack/echo/v4/middleware"
 
-	"github.com/keto-granola/server/internal/config"
-	"github.com/keto-granola/server/internal/middleware"
-	productadmin "github.com/keto-granola/server/internal/product/admin"
-	productweb "github.com/keto-granola/server/internal/product/web"
-	"github.com/keto-granola/server/internal/server/templates/templatehelpers"
-	"github.com/keto-granola/server/internal/store"
-	"github.com/keto-granola/server/internal/webassets"
+	"github.com/keto-granola/keto-granola/internal/config"
+	"github.com/keto-granola/keto-granola/internal/middleware"
+	productadmin "github.com/keto-granola/keto-granola/internal/product/admin"
+	productweb "github.com/keto-granola/keto-granola/internal/product/web"
+	"github.com/keto-granola/keto-granola/internal/server/templates/templatehelpers"
+	"github.com/keto-granola/keto-granola/internal/store"
+	"github.com/keto-granola/keto-granola/internal/webassets"
 )
 
 const (

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"html/template"
 
-	"github.com/keto-granola/server/internal/product"
-	"github.com/keto-granola/server/internal/webassets"
+	"github.com/keto-granola/keto-granola/internal/product"
+	"github.com/keto-granola/keto-granola/internal/webassets"
 )
 
 func FuncMap(assetsLoader *webassets.Loader) template.FuncMap {

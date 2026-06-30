@@ -8,12 +8,12 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 
-	"github.com/keto-granola/server/internal/apperr"
-	"github.com/keto-granola/server/internal/product"
-	"github.com/keto-granola/server/internal/product/admin"
-	"github.com/keto-granola/server/internal/store"
-	"github.com/keto-granola/server/internal/store/db/generated"
-	"github.com/keto-granola/server/internal/store/db/utils"
+	"github.com/keto-granola/keto-granola/internal/apperr"
+	"github.com/keto-granola/keto-granola/internal/product"
+	"github.com/keto-granola/keto-granola/internal/product/admin"
+	"github.com/keto-granola/keto-granola/internal/store"
+	"github.com/keto-granola/keto-granola/internal/store/db/generated"
+	"github.com/keto-granola/keto-granola/internal/store/db/utils"
 )
 
 type Store struct {

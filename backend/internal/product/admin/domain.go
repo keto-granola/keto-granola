@@ -3,7 +3,7 @@ package admin
 import (
 	"context"
 
-	"github.com/keto-granola/server/internal/product"
+	"github.com/keto-granola/keto-granola/internal/product"
 )
 
 //go:generate moq -out mocks/mock.go -pkg mocks . Repository
