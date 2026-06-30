@@ -25,13 +25,7 @@ type ProductData struct {
 }
 
 func NewHandler(svc *product.Service, tmpl *template.Template, clientURL string, env config.Environment) *Handler {
-	isDevEnv := false
-
-	if env == config.EnvironmentDevelopment {
-		isDevEnv = true
-	}
-
-	return &Handler{service: svc, templates: tmpl, clientURL: clientURL, devEnv: isDevEnv}
+	return &Handler{service: svc, templates: tmpl, clientURL: clientURL, devEnv: env == config.EnvironmentDevelopment}
 }
 
 func (h *Handler) GetProductPage(e echo.Context) error {

@@ -12,8 +12,8 @@
     <script type="module" src="{{ printf "%s/@vite/client" .ClientURL }}"></script>
     <script type="module" src="{{ printf "%s/src/islands/AddToCart.tsx" .ClientURL }}"></script>
   {{ else }}
-    <script type="module" src="{{ .Asset }}"></script>
-    {{ range .AssetCSS }}
+    <script type="module" src="{{ asset }}"></script>
+    {{ range assetCSS }}
       <link rel="stylesheet" href="{{ . }}">
     {{ end }}
   {{ end }}
