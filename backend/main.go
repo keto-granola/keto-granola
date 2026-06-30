@@ -9,14 +9,14 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/keto-granola/server/internal/config"
-	"github.com/keto-granola/server/internal/product"
-	productadmin "github.com/keto-granola/server/internal/product/admin"
-	productstore "github.com/keto-granola/server/internal/product/store"
-	"github.com/keto-granola/server/internal/product/web"
-	"github.com/keto-granola/server/internal/server"
-	"github.com/keto-granola/server/internal/store"
-	"github.com/keto-granola/server/internal/webassets"
+	"github.com/keto-granola/keto-granola/internal/config"
+	"github.com/keto-granola/keto-granola/internal/product"
+	productadmin "github.com/keto-granola/keto-granola/internal/product/admin"
+	productstore "github.com/keto-granola/keto-granola/internal/product/store"
+	"github.com/keto-granola/keto-granola/internal/product/web"
+	"github.com/keto-granola/keto-granola/internal/server"
+	"github.com/keto-granola/keto-granola/internal/store"
+	"github.com/keto-granola/keto-granola/internal/webassets"
 )
 
 func main() {
@@ -56,7 +56,7 @@ func run() error {
 		return fmt.Errorf("create templates: %w", err)
 	}
 
-	handlers := composeHandlers(dataStore, templates)
+	handlers := composeHandlers(dataStore, templates, cfg.ClientURL, cfg.Environment)
 
 	serverDeps := &server.Dependencies{
 		Environment: cfg.Environment,
@@ -89,13 +89,13 @@ func run() error {
 	return err
 }
 
-func composeHandlers(db *store.Store, tmpl *template.Template) *server.Handlers {
+func composeHandlers(db *store.Store, tmpl *template.Template, clientURL string, env config.Environment) *server.Handlers {
 	productStore := productstore.New(db.Queries)
 	prodService := product.NewService(productStore)
 	prodAdminService := productadmin.NewService(productStore)
 
 	return &server.Handlers{
 		ProductAdmin: productadmin.NewHandler(prodAdminService),
-		Product:      web.NewHandler(prodService, tmpl),
+		Product:      web.NewHandler(prodService, tmpl, clientURL, env),
 	}
 }

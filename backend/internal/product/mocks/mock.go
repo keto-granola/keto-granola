@@ -6,7 +6,7 @@ package mocks
 import (
 	"context"
 	"github.com/jackc/pgx/v5/pgtype"
-	"github.com/keto-granola/server/internal/product"
+	"github.com/keto-granola/keto-granola/internal/product"
 	"sync"
 )
 

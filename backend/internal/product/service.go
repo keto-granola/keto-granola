@@ -6,7 +6,7 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/keto-granola/server/internal/store/db/utils"
+	"github.com/keto-granola/keto-granola/internal/store/db/utils"
 )
 
 type Service struct {

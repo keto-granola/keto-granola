@@ -8,8 +8,8 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"github.com/keto-granola/server/internal/store"
-	"github.com/keto-granola/server/internal/webassets"
+	"github.com/keto-granola/keto-granola/internal/store"
+	"github.com/keto-granola/keto-granola/internal/webassets"
 )
 
 const pingTimeout = 5 * time.Second

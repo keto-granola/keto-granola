@@ -7,10 +7,10 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/keto-granola/server/internal/apperr"
-	"github.com/keto-granola/server/internal/product"
-	"github.com/keto-granola/server/internal/product/admin"
-	"github.com/keto-granola/server/internal/product/admin/mocks"
+	"github.com/keto-granola/keto-granola/internal/apperr"
+	"github.com/keto-granola/keto-granola/internal/product"
+	"github.com/keto-granola/keto-granola/internal/product/admin"
+	"github.com/keto-granola/keto-granola/internal/product/admin/mocks"
 )
 
 const (

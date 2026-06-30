@@ -5,7 +5,7 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/keto-granola/server/internal/product"
+	"github.com/keto-granola/keto-granola/internal/product"
 )
 
 type Handler struct {

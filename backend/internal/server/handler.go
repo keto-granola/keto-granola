@@ -5,7 +5,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"github.com/keto-granola/server/internal/apperr"
+	"github.com/keto-granola/keto-granola/internal/apperr"
 )
 
 type Handler[Req any, Res any] func(context.Context, Req) (Res, error)

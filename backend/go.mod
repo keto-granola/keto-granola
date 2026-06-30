@@ -1,4 +1,4 @@
-module github.com/keto-granola/server
+module github.com/keto-granola/keto-granola
 
 go 1.26
 
